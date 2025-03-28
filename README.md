@@ -1,10 +1,10 @@
 # Harvest
 Növény termesztő játék, egyszerű célokkal.
 
-###Bálint
+### Bálint
 - kozmetikumok
 TBC
 
-###Reni
+### Reni
 - main mechanika
 TBC
