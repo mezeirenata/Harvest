@@ -40,3 +40,14 @@ növényekhez osztály
 	bool megvan-e öntözve 
 
 -gridekkel dolgozunk
+
+osztály a grideknek ->
+ Be van-e ültetve
+Szín
+Virág
+(?) Mennyi ideje van bevetve
+Öntözve van?
+Van virág?
+----
+[E] use / ültet / öntöz stb
+[Esc] kilépés

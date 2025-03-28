@@ -1,0 +1,10 @@
+body{
+    background-color:rgb(216, 196, 159);
+}
+#canvas{
+    background-color: rgb(180, 201, 131); 
+    background-image: url("/images/background.png");
+    left:210px;
+    position: absolute; 
+    top:140px;
+}
