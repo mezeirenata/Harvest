@@ -1,10 +1,10 @@
 # Harvest
-Növény termesztő játék, egyszerű célokkal.
+A Harvest egy olyan nyugtató játék, amelyben a játékos önállóan ültethet növényeket, és juthat pénzhez.
 
 ### Bálint
-- kozmetikumok
+- Shop
 TBC
 
 ### Reni
-- main mechanika
+- Alap mechanikák
 TBC
