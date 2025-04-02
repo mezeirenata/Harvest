@@ -1,0 +1,13 @@
+- coinsystem
+- idő és alvás
+- cookie system
+- inventory
+- ültetés system - bevetés, növény, öntözés, idő, 
+- osztályok (player(coin?), grid, növény, )
+- törlés, újrarajzolás (sütik és gridlista alapján + player koords)
+
+
++ háttérzene
++ start button
+
+++ 2 grid 
