@@ -45,7 +45,7 @@ export function DrawGrid(grid){
     ctx.lineTo(x,y-grid.height);
     ctx.lineTo(x,y);
     if (grid.bevetve == true){
-        ctx.fillStyle = "brown";
+        ctx.fillStyle = "#432924";
         ctx.fill();
     }
     ctx.stroke();
