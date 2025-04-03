@@ -13,8 +13,7 @@ let keyState = {
 };
 /// Telik az idő
 window.onload = () => {
-    // DrawGridFirst(10,2,50);
-    DrawGridFirst(1,1,50);
+    DrawGridFirst(10,2,50);
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') {
             keyState.right = true;
@@ -53,31 +52,95 @@ function getCharactergrids(){
 
     gridlist.forEach(grid => {
       
-        let overlayX = true;
+        let overlayX = false;
         let overlayY = false;
 
-        if (((character.y - character.height) - grid.EndY)< character.height && character.y <= grid.StartY){
+        let bottomY = character.y+character.height;
+        if (character.y <= grid.StartY && bottomY >= grid.EndY ){
             overlayY = true;
-
         }
-        // if(character.y >= grid.EndY && (character.y - character.height) < grid.StartY){
-        //     overlayY = true;
-   
-        // }
+        let lastX = character.x + character.width;
+        if (lastX >= grid.StartX && character.x <= grid.EndX){
+            overlayX = true;
+        }
+
+
         if (overlayY && overlayX){
             coveredGrids.push(grid);
 
         }
        
     });
-    console.log(coveredGrids);
-    return coveredGrids;
+    return coveredGrids
 
+}
+
+function decideGrid(){
+    let coveredGrids = getCharactergrids();
+
+    if (coveredGrids.length > 0){
+        let maxGrid = coveredGrids[0];
+        let maxsize = 0;
+        coveredGrids.forEach(grid => {
+            let size = calculateSize(grid);
+            if (size > maxsize){
+                maxsize = size;
+                maxGrid = grid;
+            }
+        });
+        
+        for (let i = 0; i < gridlist.length; i++){
+         if (gridlist[i].StartX == maxGrid.StartX && gridlist[i].StartY == maxGrid.StartY ){
+                gridlist[i].kivalasztott = true;
+         }
+         else{
+            gridlist[i].kivalasztott = false;
+         }
+        }
+        
+    }
+
+
+    else{
+        for (let i = 0; i < gridlist.length; i++){
+                   gridlist[i].kivalasztott = false;
+           } 
+    }
+
+}
+
+function calculateSize(grid){
+    let sumPixels = 0;
+
+    for(let x = character.x; x < (character.x+character.width); x++){
+        for(let y = character.y; y < (character.y+character.height);y++){
+
+            for(let gridx = grid.StartX+1; gridx <= grid.EndX; gridx++){
+                for(let gridy = grid.StartY-1; gridy >= grid.EndY; gridy-- ){
+                    if (gridx == x && gridy == y ){
+                        sumPixels++;
+                    }
+                }
+            }
+
+        }
+        
+    }
+    return sumPixels;
 }
 
 
 function DrawGridByGrid(){
     gridlist.forEach(grid => {
+        if(grid.kivalasztott == true){
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = "#57a8cb";
+        }
+        else{
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "white";
+            
+        }
         DrawGrid(grid);
     });
 }
@@ -105,8 +168,6 @@ function moveCharacter() {
 function drawCharacter() {
     ctx.fillStyle = 'red';
     ctx.fillRect(character.x,character.y,character.width,character.height);
-    
-    
 }
 
 
@@ -114,9 +175,11 @@ function LoopEverything(){
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
     DrawGridByGrid();
+    
     moveCharacter();
     drawCharacter();
-    getCharactergrids();
+    
+    decideGrid();
     requestAnimationFrame(LoopEverything);
 }
 

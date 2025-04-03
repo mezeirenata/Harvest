@@ -1,5 +1,4 @@
 import {Grid} from './grid.js';
-import {Player} from './player.js';
 
 
 export let canvas = document.getElementById("canvas");
@@ -26,7 +25,7 @@ export function DrawGridFirst(grow, gcolumn, heightFrom){
             let y = heightFrom + alapy_*j;
             Draw(x,y);
             
-            gridLista.push(new Grid(x,y,x+grid.width,y-grid.height));
+            gridLista.push(new Grid(x,y,50));
 
         }
         
@@ -36,19 +35,25 @@ export function DrawGridFirst(grow, gcolumn, heightFrom){
 }
 
 export function DrawGrid(grid){
-    ctx.strokeStyle = "#fff";
     let x = grid.x;
     let y = grid.y;
-    ctx.moveTo(x,y);
-    ctx.lineTo(x+grid.width,y);
-    ctx.lineTo(x+grid.width,y-grid.height);   
-    ctx.lineTo(x,y-grid.height);
-    ctx.lineTo(x,y);
-    if (grid.bevetve == true){
-        ctx.fillStyle = "#432924";
-        ctx.fill();
+    if (grid.kivalasztott == true){
+        ctx.strokeRect(grid.StartX,grid.EndY,grid.width,grid.height);
     }
-    ctx.stroke();
+    else{
+        ctx.moveTo(x,y);
+        ctx.lineTo(x+grid.width,y);
+        ctx.lineTo(x+grid.width,y-grid.height);   
+        ctx.lineTo(x,y-grid.height);
+        ctx.lineTo(x,y);
+        if (grid.bevetve == true){
+            ctx.fillStyle = "#432924";
+            //fillRect
+        }
+        ctx.strokeStyle = "white";
+        ctx.stroke();
+
+    }
 }
 function Draw(x,y){
     ctx.strokeStyle = "#fff";
