@@ -2,9 +2,17 @@
 A Harvest egy olyan nyugtató játék, amelyben a játékos önállóan ültethet növényeket, és juthat pénzhez.
 
 ### Bálint
-- Shop
+- Shop Figma
+- Shop (page)
+- Óra/ Napszak / Napszámláló működése
+- cookie
 TBC
 
 ### Reni
-- Alap mechanikák
+- Alap mechanika (koordináta, gridsystem)
+- ültetés
+- inventory
+- cookie
+- coinsystem
+- alvás funkció
 TBC
