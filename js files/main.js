@@ -1,10 +1,11 @@
 
-import {DrawAll, DrawGrid, DrawGridFirst, GridLista, canvas, ctx} from './canvas.js';
+import {DrawGrid, DrawGridFirst, GridLista, canvas, ctx, DrawGridByCordsFirst} from './canvas.js';
 import {Player} from './player.js';
 import {Grid} from './grid.js';
 
 let character =  new Player(canvas.width / 2, canvas.height / 2, 35,35);
 let gridlist = GridLista();
+let basicGrids = [];
 let keyState = {
     right: false,
     left: false,
@@ -12,34 +13,40 @@ let keyState = {
     down: false
 };
 /// Telik az idő
+
 window.onload = () => {
+    ///
     DrawGridFirst(10,2,50);
+    DrawGridByCordsFirst(960,120,175);
+    basicGrids.push(new Grid(960,170,50));
+    DrawGridByCordsFirst(1075,575,50);
+    basicGrids.push(new Grid(1075,625,50));
+    ////
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') {
+        if (e.key === 'ArrowRight' || e.key === 'd') {
             keyState.right = true;
         }
-        if (e.key === 'ArrowLeft') {
+        if (e.key === 'ArrowLeft' || e.key === 'a') {
             keyState.left = true;
         }
-        if (e.key === 'ArrowUp') {
+        if (e.key === 'ArrowUp' || e.key === 'w') {
             keyState.up = true;
         }
-        if (e.key === 'ArrowDown') {
+        if (e.key === 'ArrowDown' || e.key === 's') {
             keyState.down = true;
         }
-        /// valami történik, újra tölti a grideket a listába
     });
     document.addEventListener('keyup', (e) => {
-        if (e.key === 'ArrowRight') {
+        if (e.key === 'ArrowRight' || e.key === 'd') {
             keyState.right = false;
         }
-        if (e.key === 'ArrowLeft') {
+        if (e.key === 'ArrowLeft' || e.key === 'a') {
             keyState.left = false;
         }
-        if (e.key === 'ArrowUp') {
+        if (e.key === 'ArrowUp' || e.key === 'w') {
             keyState.up = false;
         }
-        if (e.key === 'ArrowDown') {
+        if (e.key === 'ArrowDown' || e.key === 's') {
             keyState.down = false;
         }
     });
@@ -100,7 +107,6 @@ function decideGrid(){
         
     }
 
-
     else{
         for (let i = 0; i < gridlist.length; i++){
                    gridlist[i].kivalasztott = false;
@@ -126,20 +132,18 @@ function calculateSize(grid){
         }
         
     }
+
     return sumPixels;
 }
 
 
 function DrawGridByGrid(){
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#67953e";
     gridlist.forEach(grid => {
         if(grid.kivalasztott == true){
             ctx.lineWidth = 5;
-            ctx.strokeStyle = "#57a8cb";
-        }
-        else{
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = "white";
-            
+            ctx.strokeStyle = "#645606";
         }
         DrawGrid(grid);
     });
@@ -165,21 +169,93 @@ function moveCharacter() {
     if (character.y + character.height > canvas.height) character.y = canvas.height - character.height;
 }
 
+function openShop(){
+    //// sütik elmentése !!
+
+    window.open('shop.html');
+}
+
+function sleepAway(){
+    // idő ugrik, annyit hogy reggelre egészüljön ki az eltelt másodpercek, óraugrik
+    // napszámláló nől
+    console.log("sleeping...");
+}
+
+function activeGrid(){
+    let pressed = false;
+    basicGrids.forEach(grid => {
+        let overlayX = false;
+        let overlayY = false;
+        
+        let bottomY = character.y+character.height;
+        if (character.y <= grid.StartY && bottomY >= grid.EndY ){
+            overlayY = true;
+        }
+        let lastX = character.x + character.width;
+        if (lastX >= grid.StartX && character.x <= grid.EndX){
+            overlayX = true;
+        }
+        
+        
+        if (overlayY && overlayX){
+            document.addEventListener('keydown', (e) =>
+            { 
+                if (grid.StartX == 1015 && grid.StartY == 170)
+                {
+                    if (e.key === 'e'){
+                        openShop();
+                    }
+                }
+                
+                
+            });
+          
+            document.addEventListener('keydown', (e) => {
+                if (grid.StartX == 1075 && grid.StartY == 625  && e.key === 'e'){
+                    pressed = true;
+                }
+            })
+
+
+//// TODO/!
+            console.log(pressed);
+            if (pressed == true){
+                sleepAway();
+            }
+            
+            
+        }
+    });
+}
+
 function drawCharacter() {
     ctx.fillStyle = 'red';
     ctx.fillRect(character.x,character.y,character.width,character.height);
 }
 
 
+
 function LoopEverything(){
 
+    /// canvas letörlése
     ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    //// minden létező grid megrajzolása    -> ide kell majd mentés szerint megjeleníteni a növényeket(?)
     DrawGridByGrid();
-    
+    DrawGridByCordsFirst(960,120,175);
+    DrawGridByCordsFirst(1075,575,50);
+
+    /// karakterre vonatkozó frissülő adatok
     moveCharacter();
     drawCharacter();
     
+    //// aktív grid megkeresése, kijelölése
     decideGrid();
+    /// shop megnyitás + alvás
+    activeGrid();
+
+
+    /// Loop
     requestAnimationFrame(LoopEverything);
 }
 

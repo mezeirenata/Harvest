@@ -33,12 +33,27 @@ export function DrawGridFirst(grow, gcolumn, heightFrom){
     
     
 }
+export function DrawGridByCordsFirst(x,y,width){
+    ctx.strokeStyle = "grey";
+    ctx.lineWidth = 0.1;
+    ctx.strokeRect(x,y,width,50);
+    
+
+}
 
 export function DrawGrid(grid){
     let x = grid.x;
     let y = grid.y;
     if (grid.kivalasztott == true){
         ctx.strokeRect(grid.StartX,grid.EndY,grid.width,grid.height);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#67953e";
+        ctx.strokeRect(grid.StartX,grid.EndY,grid.width,grid.height);
+        
+        // if (grid.bevetve == true){
+        //     ctx.fillStyle = "#432924";
+        //     //fillRect
+        // }
     }
     else{
         ctx.moveTo(x,y);
@@ -46,17 +61,12 @@ export function DrawGrid(grid){
         ctx.lineTo(x+grid.width,y-grid.height);   
         ctx.lineTo(x,y-grid.height);
         ctx.lineTo(x,y);
-        if (grid.bevetve == true){
-            ctx.fillStyle = "#432924";
-            //fillRect
-        }
-        ctx.strokeStyle = "white";
         ctx.stroke();
 
     }
 }
 function Draw(x,y){
-    ctx.strokeStyle = "#fff";
+    ctx.strokeStyle = "#67953e";
     ctx.moveTo(x,y);
     ctx.lineTo(x+grid.width,y);
     ctx.lineTo(x+grid.width,y-grid.height);   
