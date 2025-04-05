@@ -13,3 +13,9 @@ body{
     position:fixed;
     left:835px;
 }
+
+#frame{
+    position: absolute; 
+    left:186px;
+    top:140px
+}

@@ -4,8 +4,8 @@ import {Grid} from './grid.js';
 export let canvas = document.getElementById("canvas");
 export let ctx = canvas.getContext("2d");
 export let gridLista = [];
-
-
+const SownGround = document.getElementById("sown");
+const WateredGround = document.getElementById("watered");
 
 let grid = {
     width : 50,
@@ -44,17 +44,19 @@ export function DrawGridByCordsFirst(x,y,width){
 export function DrawGrid(grid){
     let x = grid.x;
     let y = grid.y;
+    if (grid.bevetve === true){
+        ctx.drawImage(SownGround,grid.StartX,grid.EndY);  
+    }
+    if (grid.ontozve === true){
+        ctx.drawImage(WateredGround,grid.StartX,grid.EndY);  
+    }
     if (grid.kivalasztott == true){
         ctx.strokeRect(grid.StartX,grid.EndY,grid.width,grid.height);
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#67953e";
         ctx.strokeRect(grid.StartX,grid.EndY,grid.width,grid.height);
-        
-        // if (grid.bevetve == true){
-        //     ctx.fillStyle = "#432924";
-        //     //fillRect
-        // }
     }
+    
     else{
         ctx.moveTo(x,y);
         ctx.lineTo(x+grid.width,y);

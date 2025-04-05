@@ -14,6 +14,7 @@ export class Grid
         this.bevetve = false;
         this.virag = null;
         this.ontozve = false;
+        this.haspressed = false;
 
         this.kivalasztott = false;
 

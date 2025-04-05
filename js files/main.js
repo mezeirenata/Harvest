@@ -2,7 +2,10 @@
 import {DrawGrid, DrawGridFirst, GridLista, canvas, ctx, DrawGridByCordsFirst} from './canvas.js';
 import {Player} from './player.js';
 import {Grid} from './grid.js';
+import {displayTime} from './tets copy.js';
 
+let hasSlept = false;
+let hasPressed = false;
 let character =  new Player(canvas.width / 2, canvas.height / 2, 35,35);
 let gridlist = GridLista();
 let basicGrids = [];
@@ -10,11 +13,23 @@ let keyState = {
     right: false,
     left: false,
     up: false,
-    down: false
+    down: false,
+    e: false
 };
+/// IDŐ, SHOP, ALVÁS, INVENTORY, COMMAND BAR
+
+
+
 /// Telik az idő
+/// minden új napnál van egy másodpercszámláló
+
+/// az elmentett új másodpercnyivel ugrik az óramutató oldal betöltésekor
+/// van egy összesmásodpercszámláló -> növényekhez
 
 window.onload = () => {
+    /// idő elindul ! de elmentett napnál kezdi (minden nap végén mentés) 
+    setInterval(displayTime, 1000);
+    setInterval(GridTime,1000);
     ///
     DrawGridFirst(10,2,50);
     DrawGridByCordsFirst(960,120,175);
@@ -35,6 +50,24 @@ window.onload = () => {
         if (e.key === 'ArrowDown' || e.key === 's') {
             keyState.down = true;
         }
+        
+    });
+    document.addEventListener('keydown', (s) => {
+        if (s.key === 'e'){
+            let selectedGrid = decideGrid();
+            if (selectedGrid != null){
+                if (selectedGrid.StartX === 960 && selectedGrid.StartY === 170){
+                    openShop();
+                }
+                else if(selectedGrid.StartX === 1075 && selectedGrid.StartY === 625){
+                    sleepAway(); 
+                }
+                else{
+                    let gridFarm = SetGridProperties(selectedGrid);
+                    gridlist.push(gridFarm);
+                }
+            }
+        }
     });
     document.addEventListener('keyup', (e) => {
         if (e.key === 'ArrowRight' || e.key === 'd') {
@@ -49,9 +82,18 @@ window.onload = () => {
         if (e.key === 'ArrowDown' || e.key === 's') {
             keyState.down = false;
         }
+
     });
     LoopEverything();
 };
+
+function GridTime(){
+    gridlist.forEach(grid => {
+        if (grid.virag != null){
+            grid.ido++;
+        }
+    });
+}
 
 function getCharactergrids(){
     const coveredGrids = [];
@@ -83,6 +125,7 @@ function getCharactergrids(){
 }
 
 function decideGrid(){
+    let grid = null;
     let coveredGrids = getCharactergrids();
 
     if (coveredGrids.length > 0){
@@ -99,6 +142,7 @@ function decideGrid(){
         for (let i = 0; i < gridlist.length; i++){
          if (gridlist[i].StartX == maxGrid.StartX && gridlist[i].StartY == maxGrid.StartY ){
                 gridlist[i].kivalasztott = true;
+                grid = gridlist[i];
          }
          else{
             gridlist[i].kivalasztott = false;
@@ -113,6 +157,28 @@ function decideGrid(){
            } 
     }
 
+    basicGrids.forEach(gridBasic => {
+        let overlayX = false;
+        let overlayY = false;
+
+        let bottomY = character.y+character.height;
+        if (character.y <= gridBasic.StartY && bottomY >= gridBasic.EndY ){
+            overlayY = true;
+        }
+        let lastX = character.x + character.width;
+        if (lastX >= gridBasic.StartX && character.x <= gridBasic.EndX){
+            overlayX = true;
+        }
+
+
+        if (overlayY && overlayX){
+            grid = gridBasic;
+
+        }
+       
+    });
+    
+    return grid;
 }
 
 function calculateSize(grid){
@@ -143,7 +209,7 @@ function DrawGridByGrid(){
     gridlist.forEach(grid => {
         if(grid.kivalasztott == true){
             ctx.lineWidth = 5;
-            ctx.strokeStyle = "#645606";
+            ctx.strokeStyle = "#9dd1e7";
         }
         DrawGrid(grid);
     });
@@ -171,90 +237,89 @@ function moveCharacter() {
 
 function openShop(){
     //// sütik elmentése !!
-
     window.open('shop.html');
 }
 
 function sleepAway(){
     // idő ugrik, annyit hogy reggelre egészüljön ki az eltelt másodpercek, óraugrik
     // napszámláló nől
-    console.log("sleeping...");
+    console.log("Sleeping");
 }
 
-function activeGrid(){
-    let pressed = false;
-    basicGrids.forEach(grid => {
-        let overlayX = false;
-        let overlayY = false;
-        
-        let bottomY = character.y+character.height;
-        if (character.y <= grid.StartY && bottomY >= grid.EndY ){
-            overlayY = true;
-        }
-        let lastX = character.x + character.width;
-        if (lastX >= grid.StartX && character.x <= grid.EndX){
-            overlayX = true;
-        }
-        
-        
-        if (overlayY && overlayX){
-            document.addEventListener('keydown', (e) =>
-            { 
-                if (grid.StartX == 1015 && grid.StartY == 170)
-                {
-                    if (e.key === 'e'){
-                        openShop();
-                    }
-                }
-                
-                
-            });
-          
-            document.addEventListener('keydown', (e) => {
-                if (grid.StartX == 1075 && grid.StartY == 625  && e.key === 'e'){
-                    pressed = true;
-                }
-            })
 
 
-//// TODO/!
-            console.log(pressed);
-            if (pressed == true){
-                sleepAway();
-            }
-            
-            
-        }
-    });
-}
+
 
 function drawCharacter() {
     ctx.fillStyle = 'red';
     ctx.fillRect(character.x,character.y,character.width,character.height);
 }
 
+function SetGridProperties(grid){
+    if (grid.bevetve == false){
+        grid.bevetve = true;
+        return grid;
+    }
+    else if(grid.ontozve === false){
+        grid.ontozve = true;
+        return grid;
+    }
+    else if(grid.virag == null){
+        // nyíljon meg az inv, clickel döntsön virágot, azt a virágot kapja a grid
+        grid.ido = 0;
+        return grid;
+    }
+    else if(grid.ido === grid.virag.ido){
+        grid.bevetve = false;
+        grid.virag = null;
+        grid.ontozve = false;
+        grid.ido = 0;
+        // coin += virag.ertek
+        return grid;
+    }
+}
+
+    
+    
 
 
 function LoopEverything(){
 
     /// canvas letörlése
-    ctx.clearRect(0,0,canvas.width,canvas.height);
 
+    ctx.clearRect(0,0,canvas.width,canvas.height);
     //// minden létező grid megrajzolása    -> ide kell majd mentés szerint megjeleníteni a növényeket(?)
     DrawGridByGrid();
     DrawGridByCordsFirst(960,120,175);
     DrawGridByCordsFirst(1075,575,50);
-
+    
     /// karakterre vonatkozó frissülő adatok
     moveCharacter();
     drawCharacter();
     
     //// aktív grid megkeresése, kijelölése
     decideGrid();
+    //// TODO: NE JELÖLJÖN KI TÖBBET EGYSZERRE
+
     /// shop megnyitás + alvás
-    activeGrid();
+    if (hasSlept == true){
+        sleepAway();
+        hasSlept = false;
+    }
+    
+    // if(hasPressed == true){
+       
+    //     let newGrid = SetGridProperties(selectedGrid);
+    //     console.log(hasPressed);
+    //         hasPressed = false;
 
-
+    //     for(let i = 0; i < gridlist.length; i++){
+    //         if (gridlist[i].StartX == newGrid.StartX && gridlist[i].StartY == newGrid.StartY){
+    //             gridlist[i] = newGrid;
+    //         }
+    //     }
+    // }
+    ////
     /// Loop
     requestAnimationFrame(LoopEverything);
 }
@@ -268,4 +333,4 @@ function LoopEverything(){
 //// Coin
 //// Terület vétel -> nem rajzolja újra az egészet
 //// Cookie system
-/// Event listener (E) + kiírás
+/// Event listener (E) + kiírás 
