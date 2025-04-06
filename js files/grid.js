@@ -14,10 +14,11 @@ export class Grid
         this.bevetve = false;
         this.virag = null;
         this.ontozve = false;
-        this.haspressed = false;
+        this.viragKivalasztva = null;
+
 
         this.kivalasztott = false;
 
-        this.ido = 0; /// masodperc, amikor bevetve = true akkor elkezd szamolni;
+        this.ido = 0; 
     }
 };

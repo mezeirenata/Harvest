@@ -47,8 +47,14 @@ export function DrawGrid(grid){
     if (grid.bevetve === true){
         ctx.drawImage(SownGround,grid.StartX,grid.EndY);  
     }
+    if (grid.virag != null){
+        let cropname = grid.virag.nev;
+        ctx.drawImage(document.getElementById(cropname), grid.StartX,grid.EndY);
+    }
     if (grid.ontozve === true){
         ctx.drawImage(WateredGround,grid.StartX,grid.EndY);  
+        let cropname = grid.virag.nev;
+        ctx.drawImage(document.getElementById(cropname), grid.StartX,grid.EndY);
     }
     if (grid.kivalasztott == true){
         ctx.strokeRect(grid.StartX,grid.EndY,grid.width,grid.height);
