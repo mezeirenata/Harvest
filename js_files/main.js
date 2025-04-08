@@ -9,6 +9,10 @@ const commandbar = document.getElementById('command-line');
 let character =  new Player(canvas.width / 2, canvas.height / 2, 35,35);
 let inventory = cropGenerating();
 
+const inventoryDiv = document.getElementById("Inventory");
+inventoryDiv.style.display = "None";
+
+
 let basicGrids = [];
 let keyState = {
     right: false,
@@ -19,7 +23,6 @@ let keyState = {
 };
 
 let gridlist = GridLista();
-
 
 
 
@@ -39,7 +42,183 @@ let gridlist = GridLista();
 /// minden új napnál van egy másodpercszámláló
 
 /// az elmentett új másodpercnyivel ugrik az óramutató oldal betöltésekor
+setCookie("Inventory",0);
+setCookie("Grids",0);
 
+if (getCookie("Inventory") != "" && getCookie("Inventory") != 0){
+    let stringofInventory = getCookie("Inventory");
+    console.log(stringofInventory);
+    InventorySet(stringofInventory);
+}
+else{
+    saveInventory();
+}
+
+if (getCookie("Grids") != "" && getCookie("Grids") != 0){
+    gridlist = [];
+    let stringofgrids = getCookie("Grids");
+    GridSet(stringofgrids);
+}
+else{
+    saveGrids();
+}
+window.onload = () => {
+    /// idő elindul ! de elmentett napnál kezdi (minden nap végén mentés) 
+    setInterval(displayTime, 1000);
+    setInterval(GridTime,1000);
+
+    DrawGridFirst(10,2,50,50);
+    DrawGridByCordsFirst(960,120,175,50);
+    basicGrids.push(new Grid(960,170,175,50));
+    DrawGridByCordsFirst(1000,520,100,50);
+    basicGrids.push(new Grid(1025,570,100,100));
+
+    inventoryDiv.style.display = "None";
+    ////
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'd') {
+            keyState.right = true;
+        }
+        if (e.key === 'ArrowLeft' || e.key === 'a') {
+            keyState.left = true;
+        }
+        if (e.key === 'ArrowUp' || e.key === 'w') {
+            keyState.up = true;
+        }
+        if (e.key === 'ArrowDown' || e.key === 's') {
+            keyState.down = true;
+        }
+        
+    });
+    document.addEventListener('keydown', (s) => {
+        
+        if (s.key === 'e'){
+            commandbar.innerText = "";
+            let selectedGrid = decideGrid();
+            if (selectedGrid != null){
+                if (selectedGrid.StartX === 960 && selectedGrid.StartY === 170){
+                    openShop();
+                }
+                else if(selectedGrid.StartX === 1075 && selectedGrid.StartY === 625){
+                    sleepAway(); 
+                }
+                else{
+                    let gridFarm = SetGridProperties(selectedGrid);
+                    let index = searchIndexByGrid(gridFarm);
+                    gridlist[index] = gridFarm;
+                }
+            }
+        }
+    });
+    document.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'd') {
+            keyState.right = false;
+        }
+        if (e.key === 'ArrowLeft' || e.key === 'a') {
+            keyState.left = false;
+        }
+        if (e.key === 'ArrowUp' || e.key === 'w') {
+            keyState.up = false;
+        }
+        if (e.key === 'ArrowDown' || e.key === 's') {
+            keyState.down = false;
+        }
+
+    });
+    LoopEverything();
+};
+
+function searchIndexByGrid(grid){
+    for (let i = 0; i< gridlist.length;i++ ){
+        let item = gridlist[i];
+        if(item.StartX === grid.StartX && item.StartY === grid.StartY){
+            return i;
+        }
+    }
+}
+
+function saveGrids(){
+    let string = "";
+    for(let i = 0; i < gridlist.length; i++){
+
+        let virag = gridlist[i].virag;
+        let viragstring = "null";
+        if (virag != null){
+            viragstring = virag.nev + ":" + virag.ertek + ":" + virag.price + ":" + virag.ido + ":" + virag.kidobottSeed;
+            console.log(viragstring);
+        
+        }
+        string +=  gridlist[i].StartX + ":" +  gridlist[i].StartY + ":" +  gridlist[i].width + ":" +  gridlist[i].bevetve + ":" + viragstring + ":" + gridlist[i].ontozve + ":" +  gridlist[i].ido ;
+        if (i != gridlist.length-1){
+            string += "|";
+        }
+        
+        
+    }
+    setCookie("Grids",string);
+}
+
+function GridSet(stringofgrids){
+    let gridsString = stringofgrids.split('|');
+    gridsString.forEach(string => {
+        let strings = string.split(":");
+        let crop = new Crop(0,0,0,0,0);
+        let grid = new Grid(0,0,0,0);
+        grid.StartX = Number(strings[0]);
+        grid.StartY = Number(strings[1]);
+        grid.width = Number(strings[2]);
+        grid.height = Number(strings[2]);
+        grid.EndX = grid.StartX + grid.width;
+        grid.EndY = grid.StartY - grid.height;
+        if (strings[3] === "true"){
+            grid.bevetve = true;
+        }
+        else{
+            grid.bevetve = false;
+        }
+        if (strings[4] != "null"){
+            console.log(strings[4]);
+            crop.nev = strings[4];
+            crop.ertek = Number(strings[5]);
+            crop.price = Number(strings[6]);
+            crop.ido = Number(strings[7]);
+            crop.kidobottSeed = Number(strings[8]);
+            
+            grid.virag = crop;
+
+            if (strings[9] == "true"){
+                grid.ontozve = true;
+            }
+            else{
+                grid.ontozve = false;
+            }
+            grid.ido = Number(strings[10]);
+        }
+        else{
+            grid.virag = null;
+            if (strings[5] == "true"){
+                grid.ontozve = true;
+            }
+            else{
+                grid.ontozve = false;
+            }
+            grid.ido = Number(strings[6]);
+            
+        }
+        
+        gridlist.push(grid);
+    });
+    
+    
+}
+
+function inventoryOpen(){
+    inventoryDiv.style.display = "block";
+
+    inventory.forEach(item => {
+        document.getElementById(`amount-${item.nev}`).innerText = item.amount;
+    });
+}
 
 
 function setCookie(cname, cvalue, exdays = 1000) {
@@ -85,80 +264,11 @@ function InventorySet(stringItems){
         setAmountByName(amount,crop_);
     });
 }
-///
-if (getCookie("Inventory") != "" && getCookie("Inventory") != 0){
-    let stringofInventory = getCookie("Inventory");
-    console.log(stringofInventory);
-    InventorySet(stringofInventory);
-}
-else{
-    saveInventory();
-}
-///
 
 
 
-window.onload = () => {
-    /// idő elindul ! de elmentett napnál kezdi (minden nap végén mentés) 
-    setInterval(displayTime, 1000);
-    setInterval(GridTime,1000);
 
-    DrawGridFirst(10,2,50);
-    DrawGridByCordsFirst(960,120,175);
-    basicGrids.push(new Grid(960,170,50));
-    DrawGridByCordsFirst(1075,575,50);
-    basicGrids.push(new Grid(1075,625,50));
-    ////
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight' || e.key === 'd') {
-            keyState.right = true;
-        }
-        if (e.key === 'ArrowLeft' || e.key === 'a') {
-            keyState.left = true;
-        }
-        if (e.key === 'ArrowUp' || e.key === 'w') {
-            keyState.up = true;
-        }
-        if (e.key === 'ArrowDown' || e.key === 's') {
-            keyState.down = true;
-        }
-        
-    });
-    document.addEventListener('keydown', (s) => {
-        if (s.key === 'e'){
-            commandbar.innerText = "";
-            let selectedGrid = decideGrid();
-            if (selectedGrid != null){
-                if (selectedGrid.StartX === 960 && selectedGrid.StartY === 170){
-                    openShop();
-                }
-                else if(selectedGrid.StartX === 1075 && selectedGrid.StartY === 625){
-                    sleepAway(); 
-                }
-                else{
-                    let gridFarm = SetGridProperties(selectedGrid);
-                    gridlist.push(gridFarm);
-                }
-            }
-        }
-    });
-    document.addEventListener('keyup', (e) => {
-        if (e.key === 'ArrowRight' || e.key === 'd') {
-            keyState.right = false;
-        }
-        if (e.key === 'ArrowLeft' || e.key === 'a') {
-            keyState.left = false;
-        }
-        if (e.key === 'ArrowUp' || e.key === 'w') {
-            keyState.up = false;
-        }
-        if (e.key === 'ArrowDown' || e.key === 's') {
-            keyState.down = false;
-        }
 
-    });
-    LoopEverything();
-};
 
 function setAmountByName(amount,cropname){
     inventory.forEach(crop => {
@@ -260,7 +370,6 @@ function decideGrid(){
 
         if (overlayY && overlayX){
             grid = gridBasic;
-
         }
        
     });
@@ -303,6 +412,8 @@ function DrawGridByGrid(){
 }
 
 function moveCharacter() {
+    let originalx = character.x;
+    let originaly = character.y;
     if (keyState.right) {
         character.x += 5;
     }
@@ -320,6 +431,11 @@ function moveCharacter() {
     if (character.y < 0) character.y = 0;
     if (character.x + character.width > canvas.width) character.x = canvas.width - character.width;
     if (character.y + character.height > canvas.height) character.y = canvas.height - character.height;
+    if(character.x > 888 && character.y < 110) {
+        character.x = originalx;
+        character.y = originaly;
+    }
+ 
 }
 
 function openShop(){
@@ -345,18 +461,19 @@ function SetGridProperties(grid){
         grid.bevetve = true;
         return grid;
     }
-    else if(grid.viragKivalasztva == null){
-        // nyíljon meg az inv, clickel döntsön virágot, azt a virágot kapja a grid
-        //// alapból az első seed legyen kiválasztva 
+    else if(grid.viragKivalasztva == null && grid.virag === null){
+        inventoryOpen();
+        ///alapból első seed
         ///grid.viragKivalasztva = seed;  - de csak akkor, ha van seed 
         grid.viragKivalasztva = inventory[0];
             if(grid.viragKivalasztva.amount < 1){
                 grid.viragKivalasztva = null;
             }
         return grid;
+    
     }
     else if(grid.virag == null && grid.viragKivalasztva != null){
-
+        inventoryDiv.style.display = "None";
         grid.virag = grid.viragKivalasztva;
         let i = inventory.indexOf(grid.viragKivalasztva);
         inventory[i].amount -= 1;
@@ -364,9 +481,10 @@ function SetGridProperties(grid){
     }
     else if(grid.ontozve === false && grid.virag != null){
         grid.ontozve = true;
+        /// itt kezdje el számolni az időt
         return grid;
     }
-    else if(grid.ido === (grid.virag).ido){
+    else if(grid.virag != null && grid.ido === (grid.virag).ido){
         grid.bevetve = false;
         grid.viragKivalasztva = null;
         let i = inventory.indexOf(grid.virag);
@@ -382,20 +500,23 @@ function SetGridProperties(grid){
 }
 
 function seeProperties(currentGrid){
+    console.log(currentGrid.ontozve);
+    console.log(currentGrid.virag);
+    
     
     if(currentGrid.bevetve === false){
         commandbar.innerText = "Press [E] to cultivate ";
     }
-    else if(currentGrid.viragKivalasztva === null){
+    else if(currentGrid.viragKivalasztva === null && currentGrid.virag === null){
         commandbar.innerText = "Press [E] to choose crop";
     }
-    else if(currentGrid.virag == null && currentGrid.viragKivalasztva != null){
+    else if(currentGrid.virag === null && currentGrid.viragKivalasztva != null){
         commandbar.innerText = "Press [E] to plant seed";
     }
-    else if(currentGrid.ontozve === false  && currentGrid.virag != null){
+    else if(currentGrid.virag != null && currentGrid.ontozve === false  ){
         commandbar.innerText = "Press [E] to water soil";
     }
-    else if(currentGrid.ido === currentGrid.virag.ido){
+    else if(currentGrid.virag != null && currentGrid.ido === currentGrid.virag.ido){
         commandbar.innerText = "Press [E] to harvest";
     }
 }
@@ -419,11 +540,10 @@ function LoopEverything(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     //// minden létező grid megrajzolása    -> ide kell majd mentés szerint megjeleníteni a növényeket(?)
     DrawGridByGrid();
-    DrawGridByCordsFirst(960,120,175);
-    DrawGridByCordsFirst(1075,575,50);
+    DrawGridByCordsFirst(960,120,175,50);
+    DrawGridByCordsFirst(1025,570,100,100);
     
-    /// inventory mentés
-    saveInventory();
+   
     /// karakterre vonatkozó frissülő adatok
     moveCharacter();
     drawCharacter();
@@ -439,11 +559,27 @@ function LoopEverything(){
     else{
         commandbar.innerText = "";
     }
-    
 
+     /// mentés
+     saveInventory();
+     saveGrids();
+    /// HA ESTE VAN:
+
+    // ctx.globalAlpha = 0.5;
+    // ctx.fillStyle = "#10296b";
+    // ctx.fillRect(0,0,canvas.width,canvas.height);
+    // ctx.globalAlpha = 1.0;
     requestAnimationFrame(LoopEverything);
 }
 
+/// Teszt
+function AddAmount(cropname,amount){
+    inventory.forEach(crop => {
+        if (crop.nev === cropname){
+            crop.amount += amount;
+        }
+    });
+}
 
 
 //DrawAll(10,2,200); -> területvétel esetén

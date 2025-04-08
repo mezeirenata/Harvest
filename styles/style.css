@@ -1,11 +1,13 @@
 body{
     background-color:rgb(216, 196, 159);
+    font-family: 'Courier New', Courier, monospace;
+    font-weight:bolder;
 }
 #canvas{
     margin-top:25px;
     background-color: rgb(180, 201, 131); 
     background-image: url("/images/background.png");
-    left:210px;
+    left:160px;
     position: absolute; 
     top:140px;
 }
@@ -16,12 +18,12 @@ body{
 
 #frame{
     position: absolute; 
-    left:186px;
+    left:136px;
     top:140px
 }
 #helpBar{
     position: fixed;
-    left:535px;
+    left:485px;
     bottom:50px; 
     width: 500px; 
     height: 50px;
@@ -29,7 +31,7 @@ body{
 
 #barFrame{
     position: fixed;
-    left:525px;
+    left:475px;
     bottom:40px; 
     height:70px;
     width:520px;
@@ -37,9 +39,45 @@ body{
 
 #command-line{
     color:rgb(67, 70, 88);
-    font-family: 'Courier New', Courier, monospace;
+  
     font-weight:900;
     letter-spacing: 0.5px;
     font-size:18px;
     text-align:center;
+}
+#inventory-bg{
+    position: absolute; 
+    right:10px;
+    bottom:100px;
+}
+
+#inv-items,#inv-items-2{
+    width:550px;
+    display:flex;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    position:absolute;
+   
+}
+
+#inv-items{
+    right:10px;
+    bottom:215px;
+}
+.item{
+    padding:0 10px;
+    margin:0 5px;
+    width: 65px;
+    text-align:center;
+    cursor:pointer;
+}
+#inv-items-2{
+   bottom:105px;
+    right:10px;
+}
+.amount{
+    position:absolute;
+    font-family:arial;
+    font-weight:bold;
+    bottom:75px;
 }

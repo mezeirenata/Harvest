@@ -25,7 +25,7 @@ export function DrawGridFirst(grow, gcolumn, heightFrom){
             let y = heightFrom + alapy_*j;
             Draw(x,y);
             
-            gridLista.push(new Grid(x,y,50));
+            gridLista.push(new Grid(x,y,50,50));
 
         }
         
@@ -33,10 +33,10 @@ export function DrawGridFirst(grow, gcolumn, heightFrom){
     
     
 }
-export function DrawGridByCordsFirst(x,y,width){
-    ctx.strokeStyle = "grey";
+export function DrawGridByCordsFirst(x,y,width,height){
+    ctx.strokeStyle = "gray";
     ctx.lineWidth = 0.1;
-    ctx.strokeRect(x,y,width,50);
+    ctx.strokeRect(x,y,width,height);
     
 
 }

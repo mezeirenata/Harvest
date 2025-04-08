@@ -1,14 +1,14 @@
 export class Grid
 {
-    constructor(x1,y1,size){
+    constructor(x1,y1,sizex,sizey){
         this.StartX = x1;
         this.StartY = y1;
 
-        this.height = size;
-        this.width = size;
+        this.height = sizey;
+        this.width = sizex;
         
-        this.EndX = x1 + size;
-        this.EndY = y1 - size;
+        this.EndX = x1 + this.width;
+        this.EndY = y1 - this.height;
 
         ///
         this.bevetve = false;
