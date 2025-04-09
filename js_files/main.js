@@ -47,7 +47,6 @@ setCookie("Grids",0);
 
 if (getCookie("Inventory") != "" && getCookie("Inventory") != 0){
     let stringofInventory = getCookie("Inventory");
-    console.log(stringofInventory);
     InventorySet(stringofInventory);
 }
 else{
@@ -68,13 +67,14 @@ window.onload = () => {
     setInterval(GridTime,1000);
 
     DrawGridFirst(10,2,50,50);
-    DrawGridByCordsFirst(960,120,175,50);
+    DrawGridByCordsFirst(960,170,175,50);
     basicGrids.push(new Grid(960,170,175,50));
-    DrawGridByCordsFirst(1000,520,100,50);
-    basicGrids.push(new Grid(1025,570,100,100));
-
+    DrawGridByCordsFirst(1025,660,100,50);
+    basicGrids.push(new Grid(1025,660,100,100));
     inventoryDiv.style.display = "None";
+
     ////
+   
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === 'd') {
             keyState.right = true;
@@ -99,7 +99,7 @@ window.onload = () => {
                 if (selectedGrid.StartX === 960 && selectedGrid.StartY === 170){
                     openShop();
                 }
-                else if(selectedGrid.StartX === 1075 && selectedGrid.StartY === 625){
+                else if(selectedGrid.StartX === 1025 && selectedGrid.StartY === 570){
                     sleepAway(); 
                 }
                 else{
@@ -128,6 +128,12 @@ window.onload = () => {
     LoopEverything();
 };
 
+function chooseCropByClass(id){
+    id = "Wheat";
+    let cropname = document.querySelector(id);
+    console.log(cropname);
+}
+
 function searchIndexByGrid(grid){
     for (let i = 0; i< gridlist.length;i++ ){
         let item = gridlist[i];
@@ -145,7 +151,6 @@ function saveGrids(){
         let viragstring = "null";
         if (virag != null){
             viragstring = virag.nev + ":" + virag.ertek + ":" + virag.price + ":" + virag.ido + ":" + virag.kidobottSeed;
-            console.log(viragstring);
         
         }
         string +=  gridlist[i].StartX + ":" +  gridlist[i].StartY + ":" +  gridlist[i].width + ":" +  gridlist[i].bevetve + ":" + viragstring + ":" + gridlist[i].ontozve + ":" +  gridlist[i].ido ;
@@ -177,7 +182,6 @@ function GridSet(stringofgrids){
             grid.bevetve = false;
         }
         if (strings[4] != "null"){
-            console.log(strings[4]);
             crop.nev = strings[4];
             crop.ertek = Number(strings[5]);
             crop.price = Number(strings[6]);
@@ -369,6 +373,7 @@ function decideGrid(){
 
 
         if (overlayY && overlayX){
+
             grid = gridBasic;
         }
        
@@ -447,7 +452,6 @@ function sleepAway(){
     // nap újraindul
     // napszámláló nől
     /// csak akkor HA éjjel van már
-
     console.log("Sleeping");
 }
 
@@ -492,7 +496,6 @@ function SetGridProperties(grid){
         grid.virag = null;
         grid.ontozve = false;
         grid.ido = 0;
-        console.log(grid);
         // coin += virag.ertek
         return grid;
     }
@@ -500,8 +503,6 @@ function SetGridProperties(grid){
 }
 
 function seeProperties(currentGrid){
-    console.log(currentGrid.ontozve);
-    console.log(currentGrid.virag);
     
     
     if(currentGrid.bevetve === false){
@@ -525,7 +526,7 @@ function seeGrid(currentGrid){
     if(currentGrid.StartX === 960){
         commandbar.innerText = "Press [E] to open Shop";
     }
-    else if(currentGrid.StartX === 1075){
+    else if(currentGrid.StartX === 1025 ){
         /// HA éjjel van
         commandbar.innerText = "Press [E] to Sleep";
     }
@@ -536,12 +537,11 @@ function seeGrid(currentGrid){
 function LoopEverything(){
 
     /// canvas letörlése
-
     ctx.clearRect(0,0,canvas.width,canvas.height);
     //// minden létező grid megrajzolása    -> ide kell majd mentés szerint megjeleníteni a növényeket(?)
     DrawGridByGrid();
-    DrawGridByCordsFirst(960,120,175,50);
-    DrawGridByCordsFirst(1025,570,100,100);
+    DrawGridByCordsFirst(960,170,175,50);
+    DrawGridByCordsFirst(1025,660,100,100);
     
    
     /// karakterre vonatkozó frissülő adatok
@@ -563,7 +563,16 @@ function LoopEverything(){
      /// mentés
      saveInventory();
      saveGrids();
-    /// HA ESTE VAN:
+    
+    
+     if (inventoryDiv.style.display === "block"){
+         for(let i = 1; i < 13; i++){
+            console.log(document.querySelector(`item-${i}`));
+        }
+
+    }
+    
+     /// HA ESTE VAN:
 
     // ctx.globalAlpha = 0.5;
     // ctx.fillStyle = "#10296b";

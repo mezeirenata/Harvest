@@ -36,7 +36,7 @@ export function DrawGridFirst(grow, gcolumn, heightFrom){
 export function DrawGridByCordsFirst(x,y,width,height){
     ctx.strokeStyle = "gray";
     ctx.lineWidth = 0.1;
-    ctx.strokeRect(x,y,width,height);
+    ctx.strokeRect(x,y-height,width,height);
     
 
 }
@@ -48,12 +48,13 @@ export function DrawGrid(grid){
         ctx.drawImage(SownGround,grid.StartX,grid.EndY);  
     }
     if (grid.virag != null){
-        let cropname = grid.virag.nev;
+        let cropname = grid.virag.nev + "seed-img";
         ctx.drawImage(document.getElementById(cropname), grid.StartX,grid.EndY);
+        
     }
     if (grid.ontozve === true){
         ctx.drawImage(WateredGround,grid.StartX,grid.EndY);  
-        let cropname = grid.virag.nev;
+        let cropname = grid.virag.nev + "seed-img";
         ctx.drawImage(document.getElementById(cropname), grid.StartX,grid.EndY);
     }
     if (grid.kivalasztott == true){
