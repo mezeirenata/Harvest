@@ -1,8 +1,9 @@
 // <
+// idő -> süti, virágok, animáció, sötétedés, moon-sun
+// days -> süti, kiírva
 import {DrawGrid, DrawGridFirst, GridLista, canvas, ctx, DrawGridByCordsFirst} from './canvas.js';
 import {Player} from './player.js';
 import {Grid} from './grid.js';
-import {displayTime} from './tets copy.js';
 import {cropGenerating, Crop} from './flower.js';
 const commandbar = document.getElementById('command-line');
 let character =  new Player(canvas.width / 2, canvas.height / 2, 35,35);
@@ -22,12 +23,16 @@ let keyState = {
 };
 
 let gridlist = GridLista();
+let secs = 12.5 * 6    ; //// cookie
+let hours = 0;//// cookie
+let days = 0;
 
+let pastSecs = 0;
 
+let daytime = "day";//// -> órák alapján
 
 /// süti : coinok,
 
-// grid:  "startx-starty-size-bevetve-viragneve-ontozve-viragkivalasztva-ido" -> mentés minden loopnál (másodperc miatt)
 /// ms -> onload -> betöltés, loopkor felszámolja, elmenti (napokat kiszámítja)
 /// coinok -> minden virágbegyűjtéskor elmentődik (onloadnál betölt)
 
@@ -60,11 +65,33 @@ if (getCookie("Grids") != "" && getCookie("Grids") != 0){
 else{
     saveGrids();
 }
+function digital() {
+    hours = Math.floor(secs / 12.5);
+
+    if ((secs % 300) == 0) {
+        hours = 0;
+    }
+    else if(secs > 300) {
+        hours = 0;
+        let oszto = Math.floor(secs / 300);
+        let newsecs = secs - oszto * 300;
+        hours = Math.floor(newsecs / 12.5);   
+    }
+    if (hours > 20 || hours < 6){
+        daytime = "dark";
+    }
+
+    else{
+        daytime = "day";
+    }
+
+    days = secs / (12.5 * 24);
+    document.getElementById("digitalclock").innerText = hours + ':' + "00";
+}
 window.onload = () => {
     /// idő elindul ! de elmentett napnál kezdi (minden nap végén mentés) 
-    setInterval(displayTime, 1000);
-    setInterval(GridTime,1000);
-
+    setInterval(GrowSec,1000);
+    ////
     DrawGridFirst(10,2,50,50);
     DrawGridByCordsFirst(960,170,175,50);
     basicGrids.push(new Grid(960,170,175,50));
@@ -73,8 +100,6 @@ window.onload = () => {
     inventoryDiv.style.display = "None";
 
     ////
-   
-
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === 'd') {
             keyState.right = true;
@@ -99,7 +124,7 @@ window.onload = () => {
                 if (selectedGrid.StartX === 960 && selectedGrid.StartY === 170){
                     openShop();
                 }
-                else if(selectedGrid.StartX === 1025 && selectedGrid.StartY === 570){
+                else if(selectedGrid.StartX === 1025 && selectedGrid.StartY === 660){
                     sleepAway(); 
                 }
                 else{
@@ -451,11 +476,35 @@ function openShop(){
     window.open('shop.html');
 }
 
+function jumpintime(JumpedHours){
+    secs += JumpedHours * 12.5;
+    if ((secs % 300) == 0) {
+        hours = 0;
+    }
+    else if(secs > 300) {
+        hours = 0;
+        let oszto = Math.floor(secs / 300);
+        let newsecs = secs - oszto * 300;
+        hours = Math.floor(newsecs / 12.5);   
+    }
+}
+
 function sleepAway(){
-    // nap újraindul
-    // napszámláló nől
+    if (daytime == "dark"){
+        let hoursShouldAdd = 0;
+        if (hours < 6){
+            hoursShouldAdd = (6 - hours) ;
+        } 
+        else{
+            console.log(hours);
+            hoursShouldAdd = (24 - hours) + 6;
+            console.log(hoursShouldAdd);
+            days++;
+        }   
+        jumpintime(hoursShouldAdd);
+        console.log("Sleeping");
+    }
     /// csak akkor HA éjjel van már
-    console.log("Sleeping");
 }
 
 function drawCharacter() {
@@ -527,7 +576,9 @@ function seeGrid(currentGrid){
     }
 }
     
-
+function GrowSec(){
+    secs++;
+}
 
 function LoopEverything(){
 
@@ -537,8 +588,8 @@ function LoopEverything(){
     DrawGridByGrid();
     DrawGridByCordsFirst(960,170,175,50);
     DrawGridByCordsFirst(1025,660,100,100);
-    
-   
+    ///    
+    digital();
     /// karakterre vonatkozó frissülő adatok
     moveCharacter();
     drawCharacter();
@@ -553,6 +604,7 @@ function LoopEverything(){
     }
     else{
         commandbar.innerText = "";
+        inventoryDiv.style.display = "None";
     }
 
      /// mentés
@@ -562,6 +614,12 @@ function LoopEverything(){
     
      if (inventoryDiv.style.display === "block"){
          for(let i = 1; i < 13; i++){
+            document.querySelector(`.item-${i}`).addEventListener('mouseover', (e) => {
+                let crop = chooseCropByClass(`.item-${i}`);
+                if(crop.amount < 1){
+                    document.querySelector(`.item-${i}`).style.cursor = "default";  
+                }
+            });
             document.querySelector(`.item-${i}`).addEventListener('click', (e) => {
                 let crop = chooseCropByClass(`.item-${i}`);
                 if (currentGrid != null && !basicGrids.includes(currentGrid) && crop.amount > 0){
@@ -578,11 +636,12 @@ function LoopEverything(){
     }
     
      /// HA ESTE VAN:
-
-    // ctx.globalAlpha = 0.5;
-    // ctx.fillStyle = "#10296b";
-    // ctx.fillRect(0,0,canvas.width,canvas.height);
-    // ctx.globalAlpha = 1.0;
+    if(daytime == "dark"){
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = "#10296b";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.globalAlpha = 1.0;
+    }
     requestAnimationFrame(LoopEverything);
 }
 

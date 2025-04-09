@@ -12,10 +12,9 @@ export class Crop{
 }
 
 export function cropGenerating(){
-    /// alaplétező virág generálása, ebből egyszerre lehet akár több is
     let flowers = [];
     
-    flowers.push(new Crop("Wheat","25","3000",2,1));
-    flowers.push(new Crop("Carrot","50","3000",2,0));
+    flowers.push(new Crop("Wheat","25","12",2,1));
+    flowers.push(new Crop("Carrot","50","12",2,0));
     return flowers;
 }

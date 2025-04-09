@@ -2,6 +2,7 @@ body{
     background-color:rgb(216, 196, 159);
     font-family: 'Courier New', Courier, monospace;
     font-weight:bolder;
+    user-select: none;
 }
 #canvas{
     margin-top:25px;
@@ -81,3 +82,20 @@ body{
     font-weight:bold;
     bottom:75px;
 }
+#daytime-img{
+    position: absolute;
+    top:-15px;
+    animation-name: forog;
+    animation-duration: 4s;
+}
+
+@keyframes forog {
+    from{
+    
+    }
+    to{
+        transform: rotate(180deg);
+    }
+}
+
+/* forog2 -> holdra, cserélik egymást alul day szám */
