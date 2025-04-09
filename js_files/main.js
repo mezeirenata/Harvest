@@ -129,9 +129,7 @@ window.onload = () => {
 };
 
 function chooseCropByClass(id){
-    console.log(id);
     let cropnameDiv = document.querySelector(id);
-    console.log(cropnameDiv.id);
     let string = cropnameDiv.id;
     let cropname = string.replace("seed","");
     let crop = findCropByName(cropname);
@@ -472,14 +470,6 @@ function SetGridProperties(grid){
     }
     else if(grid.viragKivalasztva == null && grid.virag === null){
         inventoryOpen();
-        ///alapból első seed
-        ///grid.viragKivalasztva = seed;  - de csak akkor, ha van seed 
-        grid.viragKivalasztva = inventory[0];
-            if(grid.viragKivalasztva.amount < 1){
-                grid.viragKivalasztva = null;
-            }
-        return grid;
-    
     }
     else if(grid.virag == null && grid.viragKivalasztva != null){
         inventoryDiv.style.display = "None";
@@ -576,10 +566,11 @@ function LoopEverything(){
                 let crop = chooseCropByClass(`.item-${i}`);
                 if (currentGrid != null && !basicGrids.includes(currentGrid) && crop.amount > 0){
                     currentGrid.viragKivalasztva = crop;
+
                 }
                 if(crop.amount < 1){
-                    // console.log
-                    // inventory close
+                    console.log(`Not enough ${crop.nev}seed!`);
+                    inventoryDiv.style.display = "None";
                 }
             });
         }
