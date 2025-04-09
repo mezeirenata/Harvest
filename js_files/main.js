@@ -4,7 +4,6 @@ import {Player} from './player.js';
 import {Grid} from './grid.js';
 import {displayTime} from './tets copy.js';
 import {cropGenerating, Crop} from './flower.js';
-
 const commandbar = document.getElementById('command-line');
 let character =  new Player(canvas.width / 2, canvas.height / 2, 35,35);
 let inventory = cropGenerating();
@@ -75,6 +74,7 @@ window.onload = () => {
 
     ////
    
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === 'd') {
             keyState.right = true;
@@ -129,9 +129,14 @@ window.onload = () => {
 };
 
 function chooseCropByClass(id){
-    id = "Wheat";
-    let cropname = document.querySelector(id);
-    console.log(cropname);
+    console.log(id);
+    let cropnameDiv = document.querySelector(id);
+    console.log(cropnameDiv.id);
+    let string = cropnameDiv.id;
+    let cropname = string.replace("seed","");
+    let crop = findCropByName(cropname);
+    return crop;
+    
 }
 
 function searchIndexByGrid(grid){
@@ -567,7 +572,16 @@ function LoopEverything(){
     
      if (inventoryDiv.style.display === "block"){
          for(let i = 1; i < 13; i++){
-            console.log(document.querySelector(`item-${i}`));
+            document.querySelector(`.item-${i}`).addEventListener('click', (e) => {
+                let crop = chooseCropByClass(`.item-${i}`);
+                if (currentGrid != null && !basicGrids.includes(currentGrid) && crop.amount > 0){
+                    currentGrid.viragKivalasztva = crop;
+                }
+                if(crop.amount < 1){
+                    // console.log
+                    // inventory close
+                }
+            });
         }
 
     }
@@ -589,6 +603,7 @@ function AddAmount(cropname,amount){
         }
     });
 }
+/// addcoin
 
 
 //DrawAll(10,2,200); -> területvétel esetén
