@@ -1,4 +1,4 @@
-#clock {
+/* #clock {
     background-image: url("/images/ClockBG-removebg.png");
     width: 500px;
     height: 500px;
@@ -22,9 +22,21 @@
     height: 20px;
     width: 10px;
     background-color: red;
+} */
+
+#digitalclock {
+    background-image: url("/images/clockframe.jpg");
+    background-repeat: no-repeat;
+    width: 160px;
+    height: 60px;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: #002A43;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
-
-
 
 
 @keyframes clockarm {
