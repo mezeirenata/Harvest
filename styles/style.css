@@ -85,11 +85,16 @@ body{
 #daytime-img{
     position: absolute;
     top:-15px;
-    animation-name: forog;
-    animation-duration: 4s;
+}
+#moon{
+    transform: rotate(180deg);
+    left:-5px;
+    top:-14px;
+    position: absolute;
+    animation-fill-mode:forwards ;
 }
 
-@keyframes forog {
+@keyframes changeDayTime {
     from{
     
     }
@@ -97,5 +102,6 @@ body{
         transform: rotate(180deg);
     }
 }
+
 
 /* forog2 -> holdra, cserélik egymást alul day szám */

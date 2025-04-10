@@ -48,6 +48,18 @@ let daytime = "day";//// -> órák alapján
 /// az elmentett új másodpercnyivel ugrik az óramutató oldal betöltésekor
 setCookie("Inventory",0);
 setCookie("Grids",0);
+setCookie("Seconds,Days",0);
+
+if (getCookie("Seconds,Days") != "" && getCookie("Seconds,Days") != 0){
+    let strings = getCookie("Seconds,Days");
+    console.log(strings);
+    let data = strings.split('/');
+    secs = Number(data[0]);
+    days = Number(data[1]);
+}
+else{
+    setCookie("Seconds,Days",`${secs}/${days}`);
+}
 
 if (getCookie("Inventory") != "" && getCookie("Inventory") != 0){
     let stringofInventory = getCookie("Inventory");
@@ -67,7 +79,7 @@ else{
 }
 function digital() {
     hours = Math.floor(secs / 12.5);
-
+    let pastDaytime = daytime;
     if ((secs % 300) == 0) {
         hours = 0;
     }
@@ -83,6 +95,10 @@ function digital() {
 
     else{
         daytime = "day";
+    }
+
+    if(pastDaytime != daytime){
+        document.getElementById("daytime-img").style.animation = "changeDayTime 2s";
     }
 
     days = secs / (12.5 * 24);
@@ -610,7 +626,7 @@ function LoopEverything(){
      /// mentés
      saveInventory();
      saveGrids();
-    
+     setCookie("Seconds,Days",`${secs}/${days}`);
     
      if (inventoryDiv.style.display === "block"){
          for(let i = 1; i < 13; i++){
@@ -642,6 +658,7 @@ function LoopEverything(){
         ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.globalAlpha = 1.0;
     }
+    console.log(secs);
     requestAnimationFrame(LoopEverything);
 }
 
