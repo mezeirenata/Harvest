@@ -658,7 +658,6 @@ function LoopEverything(){
         ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.globalAlpha = 1.0;
     }
-    console.log(secs);
     requestAnimationFrame(LoopEverything);
 }
 
