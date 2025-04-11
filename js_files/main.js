@@ -1,6 +1,12 @@
 // <
-// idő -> süti, virágok, animáció, sötétedés, moon-sun
-// days -> süti, kiírva
+/// kinőtt a növény: óra
+/// + crops
+/// zene
+/// playgomb
+/// coins
+/// event
+
+/// grid upgrade
 import {DrawGrid, DrawGridFirst, GridLista, canvas, ctx, DrawGridByCordsFirst} from './canvas.js';
 import {Player} from './player.js';
 import {Grid} from './grid.js';
@@ -12,8 +18,8 @@ let inventory = cropGenerating();
 const inventoryDiv = document.getElementById("Inventory");
 inventoryDiv.style.display = "None";
 
-
 let basicGrids = [];
+let gridlist = GridLista();
 let keyState = {
     right: false,
     left: false,
@@ -22,33 +28,29 @@ let keyState = {
     e: false
 };
 
-let gridlist = GridLista();
-let secs = 12.5 * 6; //// cookie
-let hours = 0;//// cookie
+let coins = 0;
+let secs = 12.5 * 6;
+let hours = 0;
 let days = 0;
+let daytime = "day";
+let imgsrc = document.getElementById("coin-1");
+let gridC = null;
+let pastGrid = null;
 
-let pastSecs = 0;
-
-let daytime = "day";//// -> órák alapján
-
-/// süti : coinok,
-
-/// ms -> onload -> betöltés, loopkor felszámolja, elmenti (napokat kiszámítja)
-/// coinok -> minden virágbegyűjtéskor elmentődik (onloadnál betölt)
+let coinAnimation = 48;
 
 
-/// IDŐ, SHOP, ALVÁS, INVENTORY, 
-
-/// hang plussz event coinok,sütik
-
-
-/// Telik az idő
-/// minden új napnál van egy másodpercszámláló
-
-/// az elmentett új másodpercnyivel ugrik az óramutató oldal betöltésekor
 setCookie("Inventory",0);
 setCookie("Grids",0);
 setCookie("Seconds,Days,daytime",0);
+setCookie("Coins",0);
+
+if(getCookie("Coins") != "" && getCookie("Coins") != 0){
+    coins = Number(getCookie("Coins"));
+}
+else{
+    setCookie("Coins",coins);
+}
 
 if (getCookie("Seconds,Days,daytime") != "" && getCookie("Seconds,Days,daytime") != 0){
     let strings = getCookie("Seconds,Days,daytime");
@@ -117,7 +119,6 @@ function digital() {
     document.getElementById("digitalclock").innerText = hours + ':' + "00";
 }
 window.onload = () => {
-    /// idő elindul ! de elmentett napnál kezdi (minden nap végén mentés) 
     setInterval(GrowSec,1000);
     ////
     DrawGridFirst(10,2,50,50);
@@ -382,7 +383,6 @@ function getCharactergrids(){
 }
 
 function decideGrid(){
-    let grid = null;
     let coveredGrids = getCharactergrids();
 
     if (coveredGrids.length > 0){
@@ -399,7 +399,7 @@ function decideGrid(){
         for (let i = 0; i < gridlist.length; i++){
          if (gridlist[i].StartX == maxGrid.StartX && gridlist[i].StartY == maxGrid.StartY ){
                 gridlist[i].kivalasztott = true;
-                grid = gridlist[i];
+                gridC = gridlist[i];
          }
          else{
             gridlist[i].kivalasztott = false;
@@ -430,12 +430,16 @@ function decideGrid(){
 
         if (overlayY && overlayX){
 
-            grid = gridBasic;
+            gridC = gridBasic;
         }
        
     });
-    
-    return grid;
+    if (pastGrid != gridC){
+        document.getElementById("command-line").innerText ="";
+    }
+
+    pastGrid = gridC;
+    return gridC;
 }
 
 function calculateSize(grid){
@@ -500,7 +504,6 @@ function moveCharacter() {
 }
 
 function openShop(){
-    //// sütik elmentése !!
     window.open('shop.html');
 }
 
@@ -518,7 +521,6 @@ function jumpintime(JumpedHours){
 }
 
 function sleepAway(){
-    //// Jumptimeal megoldani // gridek idejének állítása
     if (daytime == "dark"){
         let hoursShouldAdd = 0;
         if (hours < 6){
@@ -532,7 +534,6 @@ function sleepAway(){
         jumpintime(hoursShouldAdd);
         console.log("Sleeping");
     }
-    /// csak akkor HA éjjel van már
 }
 
 function drawCharacter() {
@@ -540,8 +541,8 @@ function drawCharacter() {
     ctx.fillRect(character.x,character.y,character.width,character.height);
 }
 
-function SetGridProperties(grid){
-    if (grid.bevetve == false){
+function SetGridProperties(grid){  
+    if (grid.bevetve === false){
         grid.bevetve = true;
         return grid;
     }
@@ -560,7 +561,6 @@ function SetGridProperties(grid){
     }
     else if(grid.ontozve === false && grid.virag != null){
         grid.ontozve = true;
-        /// itt kezdje el számolni az időt
         return grid;
     }
     else if(grid.virag != null && grid.ido === (grid.virag).ido){
@@ -568,18 +568,18 @@ function SetGridProperties(grid){
         grid.viragKivalasztva = null;
         let i = inventory.indexOf(grid.virag);
         inventory[i].amount += (grid.virag).kidobottSeed;
+        coins += (grid.virag).ertek;
         grid.virag = null;
         grid.ontozve = false;
         grid.ido = 0;
-        // coin += virag.ertek
         return grid;
     }
     return grid;
 }
 
 function seeProperties(currentGrid){
-    
-    
+/// TODO: Amikor átmegy nem bevetett földről a másikra, akkor újra kiiratja
+/// Csak akkor, ha már van plantelve    
     if(currentGrid.bevetve === false){
         commandbar.innerText = "Press [E] to cultivate ";
     }
@@ -598,11 +598,10 @@ function seeProperties(currentGrid){
 }
 
 function seeGrid(currentGrid){
-    if(currentGrid.StartX === 960){
+    if(currentGrid.StartX === 960 ){
         commandbar.innerText = "Press [E] to open Shop";
     }
-    else if(currentGrid.StartX === 1025 ){
-        /// HA éjjel van
+    else if(currentGrid.StartX === 1025 && daytime == "dark" ){
         commandbar.innerText = "Press [E] to Sleep";
     }
 }
@@ -626,7 +625,6 @@ function LoopEverything(){
     DrawGridByCordsFirst(1025,660,100,100);
     ///    
     digital();
-    //-> grid idők állítása
     /// karakterre vonatkozó frissülő adatok
     moveCharacter();
     drawCharacter();
@@ -648,7 +646,9 @@ function LoopEverything(){
      saveInventory();
      saveGrids();
      setCookie("Seconds,Days,daytime",`${secs}/${days}/${daytime}`);
-    
+     setCookie("Coins",coins);
+    document.getElementById("coins-amount").innerText = coins;
+ 
      if (inventoryDiv.style.display === "block"){
          for(let i = 1; i < 13; i++){
             document.querySelector(`.item-${i}`).addEventListener('mouseover', (e) => {
@@ -671,8 +671,9 @@ function LoopEverything(){
         }
 
     }
-    ////
+    //// Napok
     document.getElementById("days-number").innerText = Math.floor(days) + 1;
+  
      /// HA ESTE VAN:
     if(daytime == "dark"){
         ctx.globalAlpha = 0.5;
@@ -680,6 +681,22 @@ function LoopEverything(){
         ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.globalAlpha = 1.0;
     }
+    if (hours == 19 || hours == 6){
+        ctx.globalAlpha = 0.3;
+        ctx.fillStyle = "#d1640a";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.globalAlpha = 1.0;
+    }
+      ///Coin animation
+      if (coinAnimation > 44){
+        coinAnimation = 1;
+    }
+
+    if(coinAnimation % 11 == 0){
+        imgsrc =  document.getElementById(`coin-${coinAnimation/11}`);  
+    }
+    ctx.drawImage(imgsrc,0,0,40,40);
+    coinAnimation++;
     requestAnimationFrame(LoopEverything);
 }
 
@@ -699,7 +716,5 @@ function SetTime(secs_){
 
 
 //DrawAll(10,2,200); -> területvétel esetén
-//// Objektum inventorynak
 //// Coin
 //// Terület vétel -> nem rajzolja újra az egészet
-//// Cookie system
