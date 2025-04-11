@@ -11,6 +11,7 @@ body {
 #cardcontainer {
     padding-top: 25px;
     padding-left: 25px;
+    text-align: center;
 }
 
 .card {
@@ -27,4 +28,11 @@ body {
 
 .container {
     padding: 2px 16px;
+}
+
+button {
+    background-color: rgb(216, 196, 159);
+    border-radius: 10px;
+    cursor: pointer;
+    
 }
