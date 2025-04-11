@@ -58,9 +58,9 @@ export function DrawGrid(grid){
         ctx.drawImage(document.getElementById(cropname), grid.StartX,grid.EndY);
     }
     if (grid.virag != null && (grid.virag).ido === grid.ido){
-        ctx.drawImage(WateredGround,grid.StartX,grid.EndY);  
+        ctx.drawImage(WateredGround,grid.StartX,grid.EndY); 
         let cropname = grid.virag.nev;
-        ctx.drawImage(document.getElementById(cropname), grid.StartX,grid.EndY);
+        ctx.drawImage(document.getElementById(cropname+"-img"), grid.StartX,grid.EndY);
     }
     
     if (grid.kivalasztott == true){

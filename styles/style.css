@@ -23,17 +23,19 @@ body{
     top:140px
 }
 #helpBar{
-    position: fixed;
+    position: absolute;
     left:485px;
-    bottom:50px; 
+    /* bottom:50px;  */
+    bottom:160px;
     width: 500px; 
     height: 50px;
 }
 
 #barFrame{
-    position: fixed;
+    position: absolute;
     left:475px;
-    bottom:40px; 
+    /* bottom:40px;  */
+    bottom:150px;
     height:70px;
     width:520px;
 }
@@ -49,7 +51,8 @@ body{
 #inventory-bg{
     position: absolute; 
     right:10px;
-    bottom:100px;
+    /* bottom:100px; */
+    bottom:190px;
 }
 
 #inv-items,#inv-items-2{
@@ -63,7 +66,8 @@ body{
 
 #inv-items{
     right:10px;
-    bottom:215px;
+    /* bottom:215px; */
+    bottom:305px;
 }
 .item{
     padding:0 10px;
@@ -73,7 +77,8 @@ body{
     cursor:pointer;
 }
 #inv-items-2{
-   bottom:105px;
+   /* bottom:105px; */
+   bottom:195px;
     right:10px;
 }
 .amount{
@@ -84,7 +89,11 @@ body{
 }
 #daytime-img{
     position: absolute;
-    top:-15px;
+    top:300px;
+    right:175px;
+    animation-fill-mode:forwards;
+    /* animation: moon 180 deg*/
+    /* animation: day 360 deg */
 }
 #moon{
     transform: rotate(180deg);
@@ -93,6 +102,18 @@ body{
     position: absolute;
     animation-fill-mode:forwards ;
 }
+
+
+#day-settings{
+    position: absolute;
+    right:180px;
+    color:#66352a;
+    top:322px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight:bold;
+    font-size:80px;
+}
+
 
 @keyframes changeDayTime {
     from{
@@ -103,5 +124,11 @@ body{
     }
 }
 
-
-/* forog2 -> holdra, cserélik egymást alul day szám */
+@keyframes changeNightTime{
+    from{
+        transform: rotate(180deg);
+    }
+    to{
+        transform:rotate(360deg);
+    }
+}

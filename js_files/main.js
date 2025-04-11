@@ -23,7 +23,7 @@ let keyState = {
 };
 
 let gridlist = GridLista();
-let secs = 12.5 * 6    ; //// cookie
+let secs = 12.5 * 6; //// cookie
 let hours = 0;//// cookie
 let days = 0;
 
@@ -48,17 +48,21 @@ let daytime = "day";//// -> órák alapján
 /// az elmentett új másodpercnyivel ugrik az óramutató oldal betöltésekor
 setCookie("Inventory",0);
 setCookie("Grids",0);
-setCookie("Seconds,Days",0);
+setCookie("Seconds,Days,daytime",0);
 
-if (getCookie("Seconds,Days") != "" && getCookie("Seconds,Days") != 0){
-    let strings = getCookie("Seconds,Days");
-    console.log(strings);
+if (getCookie("Seconds,Days,daytime") != "" && getCookie("Seconds,Days,daytime") != 0){
+    let strings = getCookie("Seconds,Days,daytime");
     let data = strings.split('/');
     secs = Number(data[0]);
-    days = Number(data[1]);
+    days = Math.floor(data[1]);
+    daytime = data[2];
+
+    if (daytime == "dark"){
+        document.getElementById("daytime-img").style.transform = "rotate(180deg)";
+    }
 }
 else{
-    setCookie("Seconds,Days",`${secs}/${days}`);
+    setCookie("Seconds,Days,daytime",`${secs}/${days}/${daytime}`);
 }
 
 if (getCookie("Inventory") != "" && getCookie("Inventory") != 0){
@@ -98,7 +102,15 @@ function digital() {
     }
 
     if(pastDaytime != daytime){
-        document.getElementById("daytime-img").style.animation = "changeDayTime 2s";
+        if (pastDaytime == "day"){
+            console.log("Sun sets..");
+            document.getElementById("daytime-img").style.animation = "changeDayTime 2s";
+        }
+        else if(pastDaytime == "dark"){
+            console.log("Sun rises..");
+            document.getElementById("daytime-img").style.animation = "changeNightTime 2s";
+        }
+        document.getElementById("daytime-img").style.animationFillMode = "forwards";
     }
 
     days = secs / (12.5 * 24);
@@ -506,16 +518,16 @@ function jumpintime(JumpedHours){
 }
 
 function sleepAway(){
+    //// Jumptimeal megoldani // gridek idejének állítása
     if (daytime == "dark"){
         let hoursShouldAdd = 0;
         if (hours < 6){
             hoursShouldAdd = (6 - hours) ;
         } 
         else{
-            console.log(hours);
             hoursShouldAdd = (24 - hours) + 6;
-            console.log(hoursShouldAdd);
             days++;
+           
         }   
         jumpintime(hoursShouldAdd);
         console.log("Sleeping");
@@ -541,6 +553,9 @@ function SetGridProperties(grid){
         grid.virag = grid.viragKivalasztva;
         let i = inventory.indexOf(grid.viragKivalasztva);
         inventory[i].amount -= 1;
+        gridlist.forEach(item => {
+            item.viragKivalasztva = null;
+        });
         return grid;
     }
     else if(grid.ontozve === false && grid.virag != null){
@@ -593,6 +608,11 @@ function seeGrid(currentGrid){
 }
     
 function GrowSec(){
+    gridlist.forEach(grid => {
+        if (grid.ontozve == true){
+            grid.ido++;
+        }
+    });
     secs++;
 }
 
@@ -606,6 +626,7 @@ function LoopEverything(){
     DrawGridByCordsFirst(1025,660,100,100);
     ///    
     digital();
+    //-> grid idők állítása
     /// karakterre vonatkozó frissülő adatok
     moveCharacter();
     drawCharacter();
@@ -626,7 +647,7 @@ function LoopEverything(){
      /// mentés
      saveInventory();
      saveGrids();
-     setCookie("Seconds,Days",`${secs}/${days}`);
+     setCookie("Seconds,Days,daytime",`${secs}/${days}/${daytime}`);
     
      if (inventoryDiv.style.display === "block"){
          for(let i = 1; i < 13; i++){
@@ -650,7 +671,8 @@ function LoopEverything(){
         }
 
     }
-    
+    ////
+    document.getElementById("days-number").innerText = Math.floor(days) + 1;
      /// HA ESTE VAN:
     if(daytime == "dark"){
         ctx.globalAlpha = 0.5;
@@ -668,6 +690,10 @@ function AddAmount(cropname,amount){
             crop.amount += amount;
         }
     });
+}
+
+function SetTime(secs_){
+    secs = secs_;
 }
 /// addcoin
 
