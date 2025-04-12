@@ -14,7 +14,7 @@ export class Crop{
 export function cropGenerating(){
     let flowers = [];
     
-    flowers.push(new Crop("Wheat","25","300",2,1));
+    flowers.push(new Crop("Wheat","25","300",1,1));
     flowers.push(new Crop("Carrot","50","300",2,0));
     return flowers;
 }

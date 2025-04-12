@@ -7,19 +7,22 @@
 /// event
 
 /// grid upgrade
-import {DrawGrid, DrawGridFirst, GridLista, canvas, ctx, DrawGridByCordsFirst} from './canvas.js';
+import {DrawGrid,DrawReadyMark, DrawGridFirst, GridLista, canvas, ctx, DrawGridByCordsFirst,DrawGridUpgrade} from './canvas.js';
 import {Player} from './player.js';
 import {Grid} from './grid.js';
 import {cropGenerating, Crop} from './flower.js';
 const commandbar = document.getElementById('command-line');
 let character =  new Player(canvas.width / 2, canvas.height / 2, 35,35);
 let inventory = cropGenerating();
+let listofSounds = [];
+
 
 const inventoryDiv = document.getElementById("Inventory");
 inventoryDiv.style.display = "None";
 
 let basicGrids = [];
 let gridlist = GridLista();
+let pastgrid = null;
 let keyState = {
     right: false,
     left: false,
@@ -33,10 +36,9 @@ let secs = 12.5 * 6;
 let hours = 0;
 let days = 0;
 let daytime = "day";
-let imgsrc = document.getElementById("coin-1");
-let gridC = null;
-let pastGrid = null;
+let Volume = 50;
 
+let imgsrc = document.getElementById("coin-1");
 let coinAnimation = 48;
 
 
@@ -44,6 +46,14 @@ setCookie("Inventory",0);
 setCookie("Grids",0);
 setCookie("Seconds,Days,daytime",0);
 setCookie("Coins",0);
+setCookie("Volume",0);
+
+if(getCookie("Volume") != "" && getCookie("Volume") != 0){
+    Volume = Number(getCookie("Volume"));
+}
+else{
+    setCookie("Volume",Volume);
+}
 
 if(getCookie("Coins") != "" && getCookie("Coins") != 0){
     coins = Number(getCookie("Coins"));
@@ -121,14 +131,39 @@ function digital() {
 window.onload = () => {
     setInterval(GrowSec,1000);
     ////
-    DrawGridFirst(10,2,50,50);
+    DrawGridFirst(10,2,50);
+    // let newGrids = DrawGridUpgrade(10,2,200);
+    // newGrids.forEach(grid => {
+    //     gridlist.push(grid);
+    // });
     DrawGridByCordsFirst(960,170,175,50);
     basicGrids.push(new Grid(960,170,175,50));
     DrawGridByCordsFirst(1025,660,100,50);
     basicGrids.push(new Grid(1025,660,100,100));
     inventoryDiv.style.display = "None";
-
     ////
+    ////
+    let VolumeSettings = document.getElementById("volumeSettings");
+    document.addEventListener("keydown", () =>{
+        let background = document.getElementById("backgroundAudio");
+        background.play();
+        listofSounds.push(background);
+        for(let i = 1; i < 7; i++ ){
+            listofSounds.push(document.getElementById(`sound-${i}`));
+        }
+        listofSounds.forEach(sound => {
+            sound.volume = Volume / 100;
+            
+        });
+
+    });
+    VolumeSettings.addEventListener('input',() =>{
+        Volume = Number(VolumeSettings.value);
+        listofSounds.forEach(sound => {
+            sound.volume = Volume / 100;
+            
+        });
+    });
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === 'd') {
             keyState.right = true;
@@ -264,7 +299,7 @@ function GridSet(stringofgrids){
                 grid.ontozve = false;
             }
             grid.ido = Number(strings[6]);
-            
+            grid.playedsound = 0;   
         }
         
         gridlist.push(grid);
@@ -384,6 +419,7 @@ function getCharactergrids(){
 
 function decideGrid(){
     let coveredGrids = getCharactergrids();
+    let grid = null;
 
     if (coveredGrids.length > 0){
         let maxGrid = coveredGrids[0];
@@ -399,10 +435,11 @@ function decideGrid(){
         for (let i = 0; i < gridlist.length; i++){
          if (gridlist[i].StartX == maxGrid.StartX && gridlist[i].StartY == maxGrid.StartY ){
                 gridlist[i].kivalasztott = true;
-                gridC = gridlist[i];
+                grid = gridlist[i];
          }
          else{
             gridlist[i].kivalasztott = false;
+      
          }
         }
         
@@ -411,6 +448,7 @@ function decideGrid(){
     else{
         for (let i = 0; i < gridlist.length; i++){
                    gridlist[i].kivalasztott = false;
+               
            } 
     }
 
@@ -429,17 +467,24 @@ function decideGrid(){
 
 
         if (overlayY && overlayX){
-
-            gridC = gridBasic;
+            console.log("meow2");
+            grid = gridBasic;
         }
-       
     });
-    if (pastGrid != gridC){
-        document.getElementById("command-line").innerText ="";
+
+    if (grid == null){
+        commandbar.innerText = "";
+    }
+    if (pastgrid != grid){
+        gridlist.forEach(grid_ => {
+            grid_.viragKivalasztva = null;
+        });
+
+        inventoryDiv.style.display = "None";
     }
 
-    pastGrid = gridC;
-    return gridC;
+    pastgrid = grid;
+    return grid;
 }
 
 function calculateSize(grid){
@@ -544,6 +589,7 @@ function drawCharacter() {
 function SetGridProperties(grid){  
     if (grid.bevetve === false){
         grid.bevetve = true;
+        listofSounds[3].play();
         return grid;
     }
     else if(grid.viragKivalasztva == null && grid.virag === null){
@@ -554,6 +600,7 @@ function SetGridProperties(grid){
         grid.virag = grid.viragKivalasztva;
         let i = inventory.indexOf(grid.viragKivalasztva);
         inventory[i].amount -= 1;
+        listofSounds[1].play();
         gridlist.forEach(item => {
             item.viragKivalasztva = null;
         });
@@ -561,27 +608,31 @@ function SetGridProperties(grid){
     }
     else if(grid.ontozve === false && grid.virag != null){
         grid.ontozve = true;
+        listofSounds[2].play();
         return grid;
     }
-    else if(grid.virag != null && grid.ido === (grid.virag).ido){
-        grid.bevetve = false;
-        grid.viragKivalasztva = null;
+    else if(grid.virag != null && grid.ido < (grid.virag).ido){
+        return grid;
+    }
+    else if(grid.virag != null && grid.ido >= (grid.virag).ido && grid.ontozve == true){
         let i = inventory.indexOf(grid.virag);
         inventory[i].amount += (grid.virag).kidobottSeed;
+        listofSounds[6].play();
         coins += (grid.virag).ertek;
+        grid.bevetve = false;
+        grid.viragKivalasztva = null;
         grid.virag = null;
         grid.ontozve = false;
         grid.ido = 0;
+        grid.playedsound = 0;   
         return grid;
     }
     return grid;
 }
 
-function seeProperties(currentGrid){
-/// TODO: Amikor átmegy nem bevetett földről a másikra, akkor újra kiiratja
-/// Csak akkor, ha már van plantelve    
+function seeProperties(currentGrid){ 
     if(currentGrid.bevetve === false){
-        commandbar.innerText = "Press [E] to cultivate ";
+        commandbar.innerText = "Press [E] to till the ground";
     }
     else if(currentGrid.viragKivalasztva === null && currentGrid.virag === null){
         commandbar.innerText = "Press [E] to choose crop";
@@ -592,8 +643,15 @@ function seeProperties(currentGrid){
     else if(currentGrid.virag != null && currentGrid.ontozve === false  ){
         commandbar.innerText = "Press [E] to water soil";
     }
-    else if(currentGrid.virag != null && currentGrid.ido === currentGrid.virag.ido){
+    else if(currentGrid.virag != null && currentGrid.ido < (currentGrid.virag).ido){
+        commandbar.innerText = "";
+    }
+    else if(currentGrid.virag != null && currentGrid.ido >= currentGrid.virag.ido){
         commandbar.innerText = "Press [E] to harvest";
+        if (currentGrid.playedsound == 0){
+            listofSounds[5].play();
+            currentGrid.playedsound++;
+        }
     }
 }
 
@@ -623,6 +681,9 @@ function LoopEverything(){
     DrawGridByGrid();
     DrawGridByCordsFirst(960,170,175,50);
     DrawGridByCordsFirst(1025,660,100,100);
+    gridlist.forEach(grid => {
+        DrawReadyMark(grid);
+    });
     ///    
     digital();
     /// karakterre vonatkozó frissülő adatok
@@ -635,9 +696,9 @@ function LoopEverything(){
         seeProperties(currentGrid);
     }
     else if(currentGrid != null && basicGrids.includes(currentGrid)){
-        seeGrid(currentGrid)
+        seeGrid(currentGrid);
     }
-    else{
+    else if (currentGrid == null){
         commandbar.innerText = "";
         inventoryDiv.style.display = "None";
     }
@@ -647,6 +708,7 @@ function LoopEverything(){
      saveGrids();
      setCookie("Seconds,Days,daytime",`${secs}/${days}/${daytime}`);
      setCookie("Coins",coins);
+     setCookie("Volume",Volume);
     document.getElementById("coins-amount").innerText = coins;
  
      if (inventoryDiv.style.display === "block"){
@@ -665,11 +727,17 @@ function LoopEverything(){
                 }
                 if(crop.amount < 1){
                     console.log(`Not enough ${crop.nev}seed!`);
-                    inventoryDiv.style.display = "None";
                 }
             });
         }
 
+    }
+    ////
+    if(Volume == 0){
+        document.getElementById("soundicon").src = "images/soundiconOff.png";
+    }
+    else{
+        document.getElementById("soundicon").src = "images/soundicon.png";
     }
     //// Napok
     document.getElementById("days-number").innerText = Math.floor(days) + 1;
@@ -681,7 +749,7 @@ function LoopEverything(){
         ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.globalAlpha = 1.0;
     }
-    if (hours == 19 || hours == 6){
+    if (hours == 19 || hours == 6 || hours == 20){
         ctx.globalAlpha = 0.3;
         ctx.fillStyle = "#d1640a";
         ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -697,6 +765,8 @@ function LoopEverything(){
     }
     ctx.drawImage(imgsrc,0,0,40,40);
     coinAnimation++;
+
+    
     requestAnimationFrame(LoopEverything);
 }
 

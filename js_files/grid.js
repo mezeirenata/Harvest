@@ -20,5 +20,7 @@ export class Grid
         this.kivalasztott = false;
 
         this.ido = 0; 
+
+        this.playedsound = 0;
     }
 };

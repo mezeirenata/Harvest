@@ -4,5 +4,7 @@ export class Player{
         this.y = y;
         this.width = width;
         this.height = height;
+
+        
     }
 }

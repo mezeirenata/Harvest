@@ -19,7 +19,7 @@ body{
 
 #frame{
     position: absolute; 
-    left:136px;
+    left:137px;
     top:140px
 }
 #helpBar{
@@ -126,7 +126,46 @@ body{
     font-size:35px;
 }
 
+#volumeSettings{
+    transform: rotate(-90deg);
+    position: absolute;
+    bottom:200px;
+    
+}
+#soundicon{
+    position:absolute;
+    bottom:65px;
+    left:90px;
+}
 
+
+input[type='range'] {
+    overflow: hidden;
+    width: 200px;
+    height:15px;
+    border:1px solid #000000;
+    background-color: #a7b0a6;
+    -webkit-appearance: none;
+  }
+  
+  input[type='range']::-webkit-slider-runnable-track {
+    height: 10px;
+    -webkit-appearance: none;
+    color: #000000;
+    margin-top: -1px;
+  
+}
+  
+  input[type='range']::-webkit-slider-thumb {
+    width: 10px;
+    -webkit-appearance: none;
+    height:10px;
+    cursor: ew-resize;
+    background: #ffffff;
+    border:1px solid rgb(255, 255, 255);
+    box-shadow: -80px 0 0 80px #542917;
+    
+  }
 #Banner{
     height:220px;
     width:400px;
