@@ -1,12 +1,7 @@
 // <
-/// kinőtt a növény: óra
 /// + crops
-/// zene
 /// playgomb
-/// coins
-/// event
-
-/// grid upgrade
+/// shops -> grid upgrade
 import {DrawGrid,DrawReadyMark, DrawGridFirst, GridLista, canvas, ctx, DrawGridByCordsFirst,DrawGridUpgrade} from './canvas.js';
 import {Player} from './player.js';
 import {Grid} from './grid.js';
@@ -30,6 +25,15 @@ let keyState = {
     down: false,
     e: false
 };
+const blocks = [];
+const blockWidth = 40;
+const blockHeight = 40;
+const blockSpeed = 2;
+
+
+let blockSpawnInterval = null;
+let healthpoints = 3;
+let rainActive = false;
 
 let coins = 0;
 let secs = 12.5 * 6;
@@ -41,21 +45,30 @@ let Volume = 50;
 let imgsrc = document.getElementById("coin-1");
 let coinAnimation = 48;
 
+let stopcharacter = false;
 
 setCookie("Inventory",0);
 setCookie("Grids",0);
 setCookie("Seconds,Days,daytime",0);
-setCookie("Coins",0);
-setCookie("Volume",0);
+setCookie("Coins","");
+setCookie("Volume","");
+setCookie("Health","");
 
-if(getCookie("Volume") != "" && getCookie("Volume") != 0){
+if (getCookie("Health") != "" ){
+    healthpoints = Number(getCookie("Health"));
+}
+else{
+    setCookie("Health",healthpoints);
+}
+
+if(getCookie("Volume") != ""){
     Volume = Number(getCookie("Volume"));
 }
 else{
     setCookie("Volume",Volume);
 }
 
-if(getCookie("Coins") != "" && getCookie("Coins") != 0){
+if(getCookie("Coins") != ""){
     coins = Number(getCookie("Coins"));
 }
 else{
@@ -132,6 +145,7 @@ window.onload = () => {
     setInterval(GrowSec,1000);
     ////
     DrawGridFirst(10,2,50);
+    
     // let newGrids = DrawGridUpgrade(10,2,200);
     // newGrids.forEach(grid => {
     //     gridlist.push(grid);
@@ -142,6 +156,7 @@ window.onload = () => {
     basicGrids.push(new Grid(1025,660,100,100));
     inventoryDiv.style.display = "None";
     ////
+    setTimeout(startRainPhase,150000);
     ////
     let VolumeSettings = document.getElementById("volumeSettings");
     document.addEventListener("keydown", () =>{
@@ -216,7 +231,72 @@ window.onload = () => {
     });
     LoopEverything();
 };
+///// rain
 
+function drawBlocks() {
+    ctx.fillStyle = '#64a9a6';
+    for (let block of blocks) {
+        ctx.drawImage(document.getElementById("leaf"),block.x,block.y,blockWidth,blockHeight);
+    }
+}
+
+function updateBlocks() {
+    for (let block of blocks) {
+        block.y += blockSpeed;
+
+        if (
+            block.x < character.x + character.width &&
+            block.x + blockWidth > character.x &&
+            block.y < character.y + character.height &&
+            block.y + blockHeight > character.y
+            && !block.hasHit
+        ) {
+            
+            healthpoints -= 1;
+            block.hasHit = true;
+        }
+    }
+
+    for (let i = blocks.length - 1; i >= 0; i--) {
+        if (blocks[i].y > canvas.height) {
+            blocks.splice(i, 1);
+        }
+    }
+}
+
+
+function spawnBlock() {
+    const x = Math.random() * (canvas.width - blockWidth);
+    blocks.push({ x, y: -blockHeight, hasHit: false });
+}
+
+
+function startRainPhase() {
+    rainActive = true;
+    blockSpawnInterval = setInterval(spawnBlock, 200);
+    setTimeout(stopRainPhase, 15000); 
+}
+
+function stopRainPhase() {
+    rainActive = false;
+    clearInterval(blockSpawnInterval);
+    scheduleNextRainPhase();
+}
+
+function stoprain(){
+    rainActive = false;
+    clearInterval(blockSpawnInterval);
+    blocks.length = 0;
+}
+
+
+function scheduleNextRainPhase() {
+    const delay = 150000;
+    setTimeout(startRainPhase, delay);
+}
+
+
+////
 function chooseCropByClass(id){
     let cropnameDiv = document.querySelector(id);
     let string = cropnameDiv.id;
@@ -361,8 +441,38 @@ function InventorySet(stringItems){
     });
 }
 
+function startOver(){
+document.getElementById("deathScreen").style.display = "block";
+ctx.globalAlpha = 0.5;
+ctx.fillStyle = "#gray";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+ctx.globalAlpha = 1.0;
+stopcharacter = true;
+commandbar.innerText = "";
+setCookie("Inventory",0);
+setCookie("Grids",0);
+setCookie("Seconds,Days,daytime",0);
+setCookie("Coins",0);
+setCookie("Health","");
+stoprain();
+document.getElementById("startoverButton").addEventListener('click', () => {
+    inventory = cropGenerating();
+    gridlist = GridLista();
+    secs = 12.5 * 6;
+    days = 0;
+    daytime = "day";
+    coins = 0;
+    stopcharacter = false;
+    healthpoints = 3;
+    document.getElementById("deathScreen").style.display = "None";
+    setCookie("Inventory",0);
+    setCookie("Grids",0);
+    setCookie("Seconds,Days,daytime",0);
+    setCookie("Coins",0);
+    setCookie("Health","");
+});
 
-
+}
 
 
 
@@ -378,13 +488,6 @@ function findCropByName(cropname){
     return inventory.find(crop => crop.nev === cropname);
 }
 
-function GridTime(){
-    gridlist.forEach(grid => {
-        if (grid.virag != null){
-            grid.ido++;
-        }
-    });
-}
 
 
 
@@ -467,7 +570,6 @@ function decideGrid(){
 
 
         if (overlayY && overlayX){
-            console.log("meow2");
             grid = gridBasic;
         }
     });
@@ -524,17 +626,20 @@ function DrawGridByGrid(){
 function moveCharacter() {
     let originalx = character.x;
     let originaly = character.y;
-    if (keyState.right) {
-        character.x += 5;
-    }
-    if (keyState.left) {
-        character.x -= 5;
-    }
-    if (keyState.up) {
-        character.y -= 5;
-    }
-    if (keyState.down) {
-        character.y += 5;
+    if (stopcharacter == false){
+        if (keyState.right) {
+            character.x += 5;
+        }
+        if (keyState.left) {
+            character.x -= 5;
+        }
+        if (keyState.up) {
+            character.y -= 5;
+        }
+        if (keyState.down) {
+            character.y += 5;
+        }
+
     }
     
     if (character.x < 0) character.x = 0;
@@ -549,6 +654,7 @@ function moveCharacter() {
 }
 
 function openShop(){
+    window.close();
     window.open('shop.html');
 }
 
@@ -577,6 +683,10 @@ function sleepAway(){
            
         }   
         jumpintime(hoursShouldAdd);
+        healthpoints += 1;
+        if (healthpoints > 3){
+            healthpoints = 3;
+        }
         console.log("Sleeping");
     }
 }
@@ -631,6 +741,8 @@ function SetGridProperties(grid){
 }
 
 function seeProperties(currentGrid){ 
+    let itemname = document.getElementById("item-name");
+    itemname.innerText = "";
     if(currentGrid.bevetve === false){
         commandbar.innerText = "Press [E] to till the ground";
     }
@@ -639,15 +751,19 @@ function seeProperties(currentGrid){
     }
     else if(currentGrid.virag === null && currentGrid.viragKivalasztva != null){
         commandbar.innerText = "Press [E] to plant seed";
+    
     }
     else if(currentGrid.virag != null && currentGrid.ontozve === false  ){
         commandbar.innerText = "Press [E] to water soil";
-    }
+        itemname.innerText = currentGrid.virag.nev;
+    }   
     else if(currentGrid.virag != null && currentGrid.ido < (currentGrid.virag).ido){
         commandbar.innerText = "";
+        itemname.innerText = currentGrid.virag.nev;
     }
     else if(currentGrid.virag != null && currentGrid.ido >= currentGrid.virag.ido){
         commandbar.innerText = "Press [E] to harvest";
+        itemname.innerText = currentGrid.virag.nev;
         if (currentGrid.playedsound == 0){
             listofSounds[5].play();
             currentGrid.playedsound++;
@@ -656,6 +772,8 @@ function seeProperties(currentGrid){
 }
 
 function seeGrid(currentGrid){
+    let itemname = document.getElementById("item-name");
+    itemname.innerText = "";
     if(currentGrid.StartX === 960 ){
         commandbar.innerText = "Press [E] to open Shop";
     }
@@ -674,10 +792,10 @@ function GrowSec(){
 }
 
 function LoopEverything(){
-
+    let itemname = document.getElementById("item-name");
     /// canvas letörlése
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    //// minden létező grid megrajzolása    -> ide kell majd mentés szerint megjeleníteni a növényeket(?)
+    ////
     DrawGridByGrid();
     DrawGridByCordsFirst(960,170,175,50);
     DrawGridByCordsFirst(1025,660,100,100);
@@ -700,6 +818,7 @@ function LoopEverything(){
     }
     else if (currentGrid == null){
         commandbar.innerText = "";
+        itemname.innerText = "";
         inventoryDiv.style.display = "None";
     }
 
@@ -732,6 +851,10 @@ function LoopEverything(){
         }
 
     }
+    //// rain
+    updateBlocks();
+    drawBlocks();
+  
     ////
     if(Volume == 0){
         document.getElementById("soundicon").src = "images/soundiconOff.png";
@@ -765,8 +888,22 @@ function LoopEverything(){
     }
     ctx.drawImage(imgsrc,0,0,40,40);
     coinAnimation++;
-
-    
+    ////
+    if (healthpoints == 3){
+        ctx.drawImage(document.getElementById("fullhp"),80,2,100,40);
+    }    
+    else if(healthpoints == 2){
+        ctx.drawImage(document.getElementById("2hp"),80,2,100,40);
+    }
+    else if(healthpoints == 1){
+        ctx.drawImage(document.getElementById("1hp"),80,2,100,40);
+    }
+    else if(healthpoints == 0){
+        ctx.drawImage(document.getElementById("0hp"),80,2,100,40);
+    }
+    if (healthpoints < 1){
+        startOver();
+    }
     requestAnimationFrame(LoopEverything);
 }
 

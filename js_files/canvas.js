@@ -13,6 +13,7 @@ let grid = {
 }
 
 
+
 export function DrawGridFirst(grow, gcolumn, heightFrom){
     let alapx_ = 50;
     let alapy_ = 50;

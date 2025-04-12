@@ -22,7 +22,6 @@
     <canvas id="canvas" width="1150" height="700"></canvas>
     <input type="range" id="volumeSettings" max="100" min="0" >
     <img id="soundicon" width="40" src="images/soundicon.png" alt="">
-
     <!-- Inventory -->
     <div id="Inventory" ><img src="images/frame.jpg" alt="" width="550"  id="inventory-bg">
    <div id="inv-items" width ="550" >
@@ -89,7 +88,8 @@
             <img src="images/Carrotseed.png" id="">
             <p></p>
         </div> 
-   </div>
+
+    </div>
 </div>
 
 <!-- Time -->
@@ -103,9 +103,11 @@
 </div>
 <div >
     <img id="Banner" src="/images/DayCounter.png" alt="">
-    <img src="images/DayText.png" style="position: absolute;right:220px;top:360px;"  width="200">
+    <img src="images/DayText.png" style="position: absolute;right:230px;top:360px;"  width="200">
     <p  id="day-settings"><span id="days-number">1</span></p>
 </div>
+
+<span id="item-name" style="position: absolute;color: rgb(0, 0, 0);bottom:100px;left:175px;font-size: 25px;"></span>
 
 <!-- Images -->
     <div style="display:none;">
@@ -143,6 +145,27 @@
 
     <div style="display:none">
         <img src="images/ready.png" alt="" id="readyCrop">
+    </div>
+    <div style="display:none">
+        <img src="images/leaf.png" alt="" id="leaf">
+    </div>
+
+    <div style="display: none;" id="deathScreen">
+        <img src="images/frame.jpg" alt="" style="position: absolute;bottom:350px;left:550px;"width = 400>
+        <p id="restartLine">You lost all of  <br> your healthpoints.</p>
+        <button id="startoverButton">Start over</button>
+    </div>
+    <div style="display:none">
+        <img src="images/fullhp.png" alt="" id="fullhp">
+    </div>
+    <div style="display:none">
+        <img src="images/2hp.png" alt="" id="2hp">
+    </div>
+    <div style="display:none">
+        <img src="images/1hp.png" alt="" id="1hp">
+    </div>
+    <div style="display:none">
+        <img src="images/0hp.png" alt="" id="0hp">
     </div>
 
     <!-- helpbar -->

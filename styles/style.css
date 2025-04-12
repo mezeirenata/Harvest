@@ -24,7 +24,7 @@ body{
 }
 #helpBar{
     position: absolute;
-    left:485px;
+    left:500px;
     bottom:50px; 
     /* bottom:160px; */
     width: 500px; 
@@ -33,27 +33,45 @@ body{
 
 #barFrame{
     position: absolute;
-    left:475px;
+    left:490px;
     bottom:40px; 
     /* bottom:150px; */
     height:70px;
     width:520px;
 }
+#startoverButton{
+    background-color: rgb(199, 73, 73);
+    border:none;
+    color:white;
+    padding:10px 20px;
+    font-weight:bolder;
+    font-size:18px;
+    font-family:monospace;
+    position:absolute;
+    left:680px;
+    bottom:380px;
+}
+#restartLine{
+    position:absolute;
+    left:650px;
+    line-height: 25px;
+    bottom:425px;
+}
 
-#command-line{
-    color:rgb(67, 70, 88);
-  
+#command-line,#restartLine{
+    color:rgb(67, 70, 88);  
     font-weight:900;
     letter-spacing: 0.5px;
     font-size:18px;
     text-align:center;
 }
+
 #inventory-bg{
     position: absolute; 
     right:10px;
-    /* bottom:100px; */
-    bottom:190px;
-}
+    bottom:100px;
+    /* bottom:190px; */
+ }
 
 #inv-items,#inv-items-2{
     width:550px;
@@ -66,9 +84,9 @@ body{
 
 #inv-items{
     right:10px;
-    /* bottom:215px; */
-    bottom:305px;
-}
+    bottom:215px;
+    /* bottom:305px; */
+ }
 .item{
     padding:0 10px;
     margin:0 5px;
@@ -77,10 +95,11 @@ body{
     cursor:pointer;
 }
 #inv-items-2{
-   /* bottom:105px; */
-   bottom:195px;
-    right:10px;
+   bottom:105px;
+   /* bottom:195px; */
+    right:10px; 
 }
+
 .amount{
     position:absolute;
     font-family:arial;
@@ -143,13 +162,14 @@ input[type='range'] {
     overflow: hidden;
     width: 200px;
     height:15px;
-    border:1px solid #000000;
-    background-color: #a7b0a6;
+    border:1px solid rgb(52, 43, 39);
+    background-color: hsla(0, 0%, 100%, 0);
     -webkit-appearance: none;
   }
   
   input[type='range']::-webkit-slider-runnable-track {
-    height: 10px;
+    height:15px;
+    width: 100%;
     -webkit-appearance: none;
     color: #000000;
     margin-top: -1px;
@@ -157,14 +177,13 @@ input[type='range'] {
 }
   
   input[type='range']::-webkit-slider-thumb {
-    width: 10px;
+    width: 15px;
     -webkit-appearance: none;
-    height:10px;
-    cursor: ew-resize;
-    background: #ffffff;
-    border:1px solid rgb(255, 255, 255);
-    box-shadow: -80px 0 0 80px #542917;
-    
+    height:15px;
+    cursor: pointer;
+    background: #331515;
+    border:2px solid #442525;
+    box-shadow: -200px 0 0 200px #7c462f;
   }
 #Banner{
     height:220px;
