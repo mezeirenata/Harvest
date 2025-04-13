@@ -2,6 +2,7 @@
 /// + crops
 /// playgomb
 /// shops -> grid upgrade
+/// achievement -> ha unlockolt mindent DíJ -> exchange
 import {DrawGrid,DrawReadyMark, DrawGridFirst, GridLista, canvas, ctx, DrawGridByCordsFirst,DrawGridUpgrade} from './canvas.js';
 import {Player} from './player.js';
 import {Grid} from './grid.js';
@@ -34,6 +35,8 @@ const blockSpeed = 2;
 let blockSpawnInterval = null;
 let healthpoints = 3;
 let rainActive = false;
+let ogsecs = 0;
+let hasDied = 0;
 
 let coins = 0;
 let secs = 12.5 * 6;
@@ -156,22 +159,41 @@ window.onload = () => {
     basicGrids.push(new Grid(1025,660,100,100));
     inventoryDiv.style.display = "None";
     ////
-    setTimeout(startRainPhase,150000);
+    setTimeout(startRainPhase,1000);
     ////
     let VolumeSettings = document.getElementById("volumeSettings");
     document.addEventListener("keydown", () =>{
-        let background = document.getElementById("backgroundAudio");
-        background.play();
-        listofSounds.push(background);
-        for(let i = 1; i < 7; i++ ){
-            listofSounds.push(document.getElementById(`sound-${i}`));
+        if (listofSounds.length == 0){
+            let background = document.getElementById("backgroundAudio");
+            background.play();
+            listofSounds.push(background);
+            for(let i = 1; i < 8; i++ ){
+                listofSounds.push(document.getElementById(`sound-${i}`));
+            }
+            listofSounds.forEach(sound => {
+                sound.volume = Volume / 100;
+                
+            });
+
         }
-        listofSounds.forEach(sound => {
-            sound.volume = Volume / 100;
-            
-        });
 
     });
+    document.addEventListener("click", () =>{
+        if (listofSounds.length == 0){
+            let background = document.getElementById("backgroundAudio");
+            background.play();
+            listofSounds.push(background);
+            for(let i = 1; i < 8; i++ ){
+                listofSounds.push(document.getElementById(`sound-${i}`));
+            }
+            listofSounds.forEach(sound => {
+                sound.volume = Volume / 100;
+                
+            });
+
+        }
+    });
+    ///TODO mousemove
     VolumeSettings.addEventListener('input',() =>{
         Volume = Number(VolumeSettings.value);
         listofSounds.forEach(sound => {
@@ -253,6 +275,11 @@ function updateBlocks() {
         ) {
             
             healthpoints -= 1;
+            listofSounds[7].play();
+            ctx.globalAlpha = 0.5;
+            ctx.fillStyle = "red";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.globalAlpha = 1.0;
             block.hasHit = true;
         }
     }
@@ -423,7 +450,7 @@ function getCookie(cname) {
 function saveInventory(){
     let string = "";
         for(let i = 0; i < inventory.length; i++){
-            string += inventory[i].nev + "-" + inventory[i].amount;
+            string += inventory[i].nev + "-" + inventory[i].amount + "-" + inventory[i].grownamount;
             if (i < inventory.length - 1){
                 string += "/";
             }            
@@ -437,12 +464,18 @@ function InventorySet(stringItems){
     items.forEach(item => {
         let crop_ = item.split('-')[0];
         let amount = Number(item.split('-')[1]);
-        setAmountByName(amount,crop_);
+        let grownamount = Number(item.split('-')[2]);
+        setAmountByName(amount,crop_,grownamount);
     });
 }
 
 function startOver(){
 document.getElementById("deathScreen").style.display = "block";
+hasDied++;
+if (hasDied == 1){
+    ogsecs = secs;
+}
+secs = ogsecs;
 ctx.globalAlpha = 0.5;
 ctx.fillStyle = "#gray";
 ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -464,6 +497,9 @@ document.getElementById("startoverButton").addEventListener('click', () => {
     coins = 0;
     stopcharacter = false;
     healthpoints = 3;
+    hasDied = 0;
+    character.x = canvas.width / 2;
+    character.y = canvas.height / 2;
     document.getElementById("deathScreen").style.display = "None";
     setCookie("Inventory",0);
     setCookie("Grids",0);
@@ -476,10 +512,11 @@ document.getElementById("startoverButton").addEventListener('click', () => {
 
 
 
-function setAmountByName(amount,cropname){
+function setAmountByName(amount,cropname,grownamount){
     inventory.forEach(crop => {
         if(crop.nev === cropname){
             crop.amount = Number(amount);
+            crop.grownamount = Number(grownamount)
         }
     });
 }
@@ -727,6 +764,7 @@ function SetGridProperties(grid){
     else if(grid.virag != null && grid.ido >= (grid.virag).ido && grid.ontozve == true){
         let i = inventory.indexOf(grid.virag);
         inventory[i].amount += (grid.virag).kidobottSeed;
+        inventory[i].grownamount++;
         listofSounds[6].play();
         coins += (grid.virag).ertek;
         grid.bevetve = false;
@@ -878,16 +916,7 @@ function LoopEverything(){
         ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.globalAlpha = 1.0;
     }
-      ///Coin animation
-      if (coinAnimation > 44){
-        coinAnimation = 1;
-    }
 
-    if(coinAnimation % 11 == 0){
-        imgsrc =  document.getElementById(`coin-${coinAnimation/11}`);  
-    }
-    ctx.drawImage(imgsrc,0,0,40,40);
-    coinAnimation++;
     ////
     if (healthpoints == 3){
         ctx.drawImage(document.getElementById("fullhp"),80,2,100,40);
@@ -902,8 +931,24 @@ function LoopEverything(){
         ctx.drawImage(document.getElementById("0hp"),80,2,100,40);
     }
     if (healthpoints < 1){
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = "#gray";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.globalAlpha = 1.0;
         startOver();
+    
+    ctx.drawImage(document.getElementById("0hp"),80,2,100,40);
     }
+    ///Coin animation
+    if (coinAnimation > 44){
+    coinAnimation = 1;
+    }
+
+    if(coinAnimation % 11 == 0){
+        imgsrc =  document.getElementById(`coin-${coinAnimation/11}`);  
+    }
+    ctx.drawImage(imgsrc,0,0,40,40);
+    coinAnimation++;
     requestAnimationFrame(LoopEverything);
 }
 

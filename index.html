@@ -16,6 +16,7 @@
     <audio src="sounds/zapsplat_multimedia_alert_action_collect_pick_up_point_or_item_79293.mp3" id="sound-4"></audio>
     <audio src="sounds/zapsplat_multimedia_game_sound_blip_clink_collect_item_113070.mp3" id="sound-5"></audio>
     <audio src="sounds/zapsplat_multimedia_game_tone_pick_up_collect_item_sci_fi_004_46204.mp3" id="sound-6"></audio>
+    <audio src="sounds/zapsplat_impacts_plants_foliage_weeds_whack_hit_with_stick_single_001_113140.mp3" id="sound-7"></audio>
     <!-- canvas frame -->
     <img src="images/title.png" width="250px" id="img-h1">
     <img src="images/frame.jpg" alt="" id="frame" width="1195" height="750">
@@ -23,7 +24,7 @@
     <input type="range" id="volumeSettings" max="100" min="0" >
     <img id="soundicon" width="40" src="images/soundicon.png" alt="">
     <!-- Inventory -->
-    <div id="Inventory" ><img src="images/frame.jpg" alt="" width="550"  id="inventory-bg">
+    <div id="Inventory" ><img src="images/frame.jpg" alt="" width="550" height="280" id="inventory-bg">
    <div id="inv-items" width ="550" >
         <div id="Wheatseed" class="item item-1" >
             <p id="amount-Wheat" class="amount">0</p>
@@ -35,58 +36,58 @@
             <img src="images/Carrotseed.png" id="Carrot">
             <p>Carrot</p>
         </div>
-        <div class="item item-3">
-            <p id="amount-" class="amount">0</p>
-            <img src="images/Carrotseed.png" id="">
-            <p></p>
+        <div class="item item-3" id="Cornseed">
+            <p id="amount-Corn" class="amount">0</p>
+            <img src="images/Cornseed.png" id="Corn">
+            <p>Corn</p>
         </div>
-        <div class="item item-4">
-            <p id="amount-" class="amount">0</p>
-            <img src="images/Carrotseed.png" id="">
-            <p></p>
+        <div class="item item-4" id="Eggplantseed">
+            <p id="amount-Eggplant" class="amount">0</p>
+            <img src="images/Eggplantseed.png" id="Eggplant">
+            <p>Eggplant</p>
         </div>
-        <div class="item item-5">
-            <p id="amount-" class="amount">0</p>
-            <img src="images/Carrotseed.png" id="">
-            <p></p>
+        <div class="item item-5" id="Turnipseed">
+            <p id="amount-Turnip" class="amount">0</p>
+            <img src="images/Turnipseed.png" id="Turnip">
+            <p>Turnip</p>
         </div>
-        <div class="item item-6">
-            <p id="amount-" class="amount">0</p>
-            <img src="images/Carrotseed.png" id="">
-            <p></p>
+        <div class="item item-6" id="Tomatoseed">
+            <p id="amount-Tomato" class="amount">0</p>
+            <img src="images/Tomatoseed.png" id="Tomato">
+            <p>Tomato</p>
         </div>
       
     </div>
     <div id="inv-items-2" width ="550" >
-        <div class="item item-7">
-            <p id="amount-" class="amount">0</p>
-            <img src="images/Carrotseed.png" id="">
-            <p></p>
+        <div class="item item-7" id="Potatoseed">
+            <p id="amount-Potato" class="amount">0</p>
+            <img src="images/Potatoseed.png" id="Potato">
+            <p>Potato</p>
         </div> 
-        <div class="item item-8">
-            <p id="amount-" class="amount">0</p>
-            <img src="images/Carrotseed.png" id="">
-            <p></p>
+        <div class="item item-8" id="Cauliflowerseed">
+            <p id="amount-Cauliflower" class="amount">0</p>
+            <img src="images/Cauliflowerseed.png" id="Cauliflower">
+            <p style="right:360px;position: absolute;">Cauliflower</p>
         </div> 
-        <div class="item item-9">
-            <p id="amount-" class="amount">0</p>
-            <img src="images/Carrotseed.png" id="">
-            <p></p>
+        <div class="item item-9" id="Pumpkinseed">
+            <p id="amount-Pumpkin" class="amount">0</p>
+            <img src="images/Pumpkinseed.png" id="Pumpkin">
+            <p>Pumpkin</p>
         </div> 
-        <div class="item item-10">
-            <p id="amount-" class="amount">0</p>
-            <img src="images/Carrotseed.png" id="">
-            <p></p>
+        <div class="item item-10" id="Lettuceseed">
+            <p id="amount-Lettuce" class="amount">0</p>
+            <img src="images/Lettuceseed.png" id="Lettuce">
+            <p >Lettuce</p>
         </div> 
-        <div class="item item-11">
-            <p id="amount-" class="amount">0</p>
-            <img src="images/Carrotseed.png" id="">
-            <p></p>
+        <div class="item item-11" id="Purplelettuceseed">
+            <p id="amount-Purplelettuce" class="amount">0</p>
+            <img src="images/Purplelettuceseed.png" id="Purplelettuce">
+            <p style="bottom:0.5px;margin-right:10px;position:absolute;">Purple <br> lettuce</p>
         </div>
-        <div class="item item-12">
-            <p id="amount-" class="amount">0</p>
-            <img src="images/Carrotseed.png" id="">
-            <p></p>
+        <div class="item item-12" id="Goldencarrotseed">
+            <p id="amount-Goldencarrot" class="amount">0</p>
+            <img src="images/Goldencarrotseed.png" id="Goldencarrot">
+            <p style="bottom:-0.5px;margin-right:10px;position:absolute;">Golden carrot</p>
         </div> 
 
     </div>
@@ -122,12 +123,74 @@
         <img id="Wheat-img" width="50" height="50" src="images/Wheat.png">
     </div>
     <div style="display:none;">
-        <img id="Carrot" width="50" height="50" src="images/carrot.png">
-    </div>
-    <div style="display:none;">
         <img id="Wheatseed-img" width="50" height="50" src="images/Wheatseed.png">
     </div>
-
+    <div style="display:none;">
+        <img id="Carrot-img" width="50" height="50" src="images/Carrot.png">
+    </div>
+    <div style="display:none;">
+        <img id="Carrotseed-img" width="50" height="50" src="images/Carrotseed.png">
+    </div>
+    <div style="display:none;">
+        <img id="Corn-img" width="50" src="images/Corn.png">
+    </div>
+    <div style="display:none;">
+        <img id="Cornseed-img" width="50" height="50" src="images/Cornseed.png">
+    </div>
+    <div style="display:none;">
+        <img id="Eggplant-img" width="50" src="images/Eggplant.png">
+    </div>
+    <div style="display:none;">
+        <img id="Eggplantseed-img" width="50" height="50" src="images/Eggplantseed.png">
+    </div>
+    <div style="display:none;">
+        <img id="Turnip-img" width="50" height="50" src="images/Turnip.png">
+    </div>
+    <div style="display:none;">
+        <img id="Turnipseed-img" width="50" height="50" src="images/Turnipseed.png">
+    </div>
+    <div style="display:none;">
+        <img id="Tomato-img" width="50" height="50" src="images/Tomato.png">
+    </div>
+    <div style="display:none;">
+        <img id="Tomatoseed-img" width="50" height="50" src="images/Tomatoseed.png">
+    </div>
+    <div style="display:none;">
+        <img id="Potato-img" width="50" height="50" src="images/Potato.png">
+    </div>
+    <div style="display:none;">
+        <img id="Potatoseed-img" width="50" height="50" src="images/Potatoseed.png">
+    </div>
+    <div style="display:none;">
+        <img id="Goldencarrot-img" width="50" height="50" src="images/Goldencarrot.png">
+    </div>
+    <div style="display:none;">
+        <img id="Goldencarrotseed-img" width="50" height="50" src="images/Goldencarrotseed.png">
+    </div>
+    <div style="display:none;">
+        <img id="Cauliflower-img" width="50" height="50" src="images/Cauliflower.png">
+    </div>
+    <div style="display:none;">
+        <img id="Cauliflowerseed-img" width="50" height="50" src="images/Cauliflowerseed.png">
+    </div>
+    <div style="display:none;">
+        <img id="Pumpkin-img" width="50" height="50" src="images/Pumpkin.png">
+    </div>
+    <div style="display:none;">
+        <img id="Pumpkinseed-img" width="50" height="50" src="images/Pumpkinseed.png">
+    </div>
+    <div style="display:none;">
+        <img id="Lettuce-img" width="50" height="50" src="images/Lettuce.png">
+    </div>
+    <div style="display:none;">
+        <img id="Lettuceseed-img" width="50" height="50" src="images/Lettuceseed.png">
+    </div>
+    <div style="display:none;">
+        <img id="Purplelettuce-img" width="50" height="50" src="images/Purplelettuce.png">
+    </div>
+    <div style="display:none;">
+        <img id="Purplelettuceseed-img" width="50" height="50" src="images/Purplelettuceseed.png">
+    </div>
     <!-- coins -->
     <div style="display:none;">
         <img  width="10" height="10" src="images/coin1.png" id="coin-1">
