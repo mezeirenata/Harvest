@@ -1,9 +1,6 @@
 // <
-/// + crops
 /// playgomb
-/// shops -> grid upgrade
-/// achievement -> ha unlockolt mindent DíJ -> exchange
-import {DrawGrid,DrawReadyMark, DrawGridFirst, GridLista, canvas, ctx, DrawGridByCordsFirst,DrawGridUpgrade} from './canvas.js';
+import {DrawGrid,DrawUpgradeGrid,DrawReadyMark, DrawGridFirst, GridLista, canvas, ctx, DrawGridByCordsFirst,DrawGridUpgrade} from './canvas.js';
 import {Player} from './player.js';
 import {Grid} from './grid.js';
 import {cropGenerating, Crop} from './flower.js';
@@ -11,11 +8,12 @@ const commandbar = document.getElementById('command-line');
 let character =  new Player(canvas.width / 2, canvas.height / 2, 35,35);
 let inventory = cropGenerating();
 let listofSounds = [];
-
+let dots = 0;
 
 const inventoryDiv = document.getElementById("Inventory");
 inventoryDiv.style.display = "None";
 
+let Award = false;
 let basicGrids = [];
 let gridlist = GridLista();
 let pastgrid = null;
@@ -34,9 +32,9 @@ const blockSpeed = 2;
 
 let blockSpawnInterval = null;
 let healthpoints = 3;
-let rainActive = false;
 let ogsecs = 0;
 let hasDied = 0;
+let rainActive = false;
 
 let coins = 0;
 let secs = 12.5 * 6;
@@ -45,70 +43,77 @@ let days = 0;
 let daytime = "day";
 let Volume = 50;
 
+let upgrade = 0;
 let imgsrc = document.getElementById("coin-1");
 let coinAnimation = 48;
 
 let stopcharacter = false;
 
-setCookie("Inventory",0);
-setCookie("Grids",0);
-setCookie("Seconds,Days,daytime",0);
-setCookie("Coins","");
-setCookie("Volume","");
-setCookie("Health","");
+clearCookies();
 
-if (getCookie("Health") != "" ){
-    healthpoints = Number(getCookie("Health"));
-}
-else{
-    setCookie("Health",healthpoints);
-}
-
-if(getCookie("Volume") != ""){
-    Volume = Number(getCookie("Volume"));
-}
-else{
-    setCookie("Volume",Volume);
-}
-
-if(getCookie("Coins") != ""){
-    coins = Number(getCookie("Coins"));
-}
-else{
-    setCookie("Coins",coins);
-}
-
-if (getCookie("Seconds,Days,daytime") != "" && getCookie("Seconds,Days,daytime") != 0){
-    let strings = getCookie("Seconds,Days,daytime");
-    let data = strings.split('/');
-    secs = Number(data[0]);
-    days = Math.floor(data[1]);
-    daytime = data[2];
-
-    if (daytime == "dark"){
-        document.getElementById("daytime-img").style.transform = "rotate(180deg)";
+function Cookies(){
+    if (getCookie("Award") == "true"){
+        Award = true;
+    }
+    else{
+        setCookie("Award",Award);
+    }
+    if (getCookie("Health") != "" ){
+        healthpoints = Number(getCookie("Health"));
+    }
+    else{
+        setCookie("Health",healthpoints);
+    }
+    if (getCookie("Upgrade") != ""){
+        upgrade = Number(getCookie("Upgrade"));
+    }
+    else{
+        setCookie("Upgrade",upgrade);
+    }
+    if(getCookie("Volume") != ""){
+        Volume = Number(getCookie("Volume"));
+    }
+    else{
+        setCookie("Volume",Volume);
+    }
+    if(getCookie("Coins") != ""){
+        coins = Number(getCookie("Coins"));
+    }
+    else{
+        setCookie("Coins",coins);
+    }
+    if (getCookie("Seconds,Days,daytime") != "" && getCookie("Seconds,Days,daytime") != 0){
+        let strings = getCookie("Seconds,Days,daytime");
+        let data = strings.split('/');
+        secs = Number(data[0]);
+        days = Math.floor(data[1]);
+        daytime = data[2];
+    
+        if (daytime == "dark"){
+            document.getElementById("daytime-img").style.transform = "rotate(180deg)";
+        }
+    }
+    else{
+        setCookie("Seconds,Days,daytime",`${secs}/${days}/${daytime}`);
+    }
+    if (getCookie("Inventory") != "" && getCookie("Inventory") != 0){
+        let stringofInventory = getCookie("Inventory");
+        InventorySet(stringofInventory);
+    }
+    else{
+        saveInventory();
+    }
+    if (getCookie("Grids") != "" && getCookie("Grids") != 0){
+        gridlist = [];
+        let stringofgrids = getCookie("Grids");
+        GridSet(stringofgrids);
+    }
+    else{
+        saveGrids();
     }
 }
-else{
-    setCookie("Seconds,Days,daytime",`${secs}/${days}/${daytime}`);
-}
 
-if (getCookie("Inventory") != "" && getCookie("Inventory") != 0){
-    let stringofInventory = getCookie("Inventory");
-    InventorySet(stringofInventory);
-}
-else{
-    saveInventory();
-}
-
-if (getCookie("Grids") != "" && getCookie("Grids") != 0){
-    gridlist = [];
-    let stringofgrids = getCookie("Grids");
-    GridSet(stringofgrids);
-}
-else{
-    saveGrids();
-}
+/////
 function digital() {
     hours = Math.floor(secs / 12.5);
     let pastDaytime = daytime;
@@ -145,22 +150,114 @@ function digital() {
     document.getElementById("digitalclock").innerText = hours + ':' + "00";
 }
 window.onload = () => {
-    setInterval(GrowSec,1000);
-    ////
-    DrawGridFirst(10,2,50);
-    
-    // let newGrids = DrawGridUpgrade(10,2,200);
-    // newGrids.forEach(grid => {
-    //     gridlist.push(grid);
-    // });
-    DrawGridByCordsFirst(960,170,175,50);
-    basicGrids.push(new Grid(960,170,175,50));
-    DrawGridByCordsFirst(1025,660,100,50);
-    basicGrids.push(new Grid(1025,660,100,100));
-    inventoryDiv.style.display = "None";
-    ////
-    setTimeout(startRainPhase,1000);
-    ////
+    Cookies();
+    mainScreen();
+    document.getElementById("play-button").addEventListener('click', () => {
+        document.getElementById("play-button").style.display = "none";
+        document.getElementById("play-button-clicked").style.display = "block";
+       
+        setTimeout(() => {
+            document.getElementById("play-button-clicked").style.display = "none";
+            document.getElementById("play-button").style.display = "block";
+        },250);
+        setTimeout(() => {
+            document.getElementById("play-button").style.display = "none";
+            document.getElementById("loading").style.display = "block";
+            const interval = setInterval(() => {
+                dots = WriteDot();
+            },1000);
+            setTimeout(() => {
+                clearInterval(interval);
+                dots = 4;
+                if (dots > 3){
+                    document.getElementById("loading").style.display = "none";
+                    document.getElementById("coins-amount").style.display = "block";
+                    document.getElementById("digitalclock").style.display = "flex";
+                    document.getElementById("daytime-img").style.display = "block";
+                    document.getElementById("DayCounter").style.display = "block";
+                    document.getElementById("barFrame").style.display = "block";
+                    {
+                        setInterval(GrowSec,1000);
+                        setTimeout(startRainPhase,150000);
+                    //// draw
+                        DrawGridFirst(10,2,100);
+                        if (Award == true){
+                      
+                            ctx.drawImage(document.getElementById("award"),0,canvas.height,50,50);
+                        }
+                        let upgrade = Number(getCookie("Upgrade"));
+                        for(let j = 1; j < upgrade+1; j++){
+                            console.log("meow");
+                            let newGrids = DrawUpgradeGrid(10,2,100 + j*150); 
+                            newGrids.forEach(grid =>{
+                            gridlist.push(grid);
+                        });
+                        }
+                    
+                        DrawGridByCordsFirst(960,170,175,50);
+                        basicGrids.push(new Grid(960,170,175,50));
+                        DrawGridByCordsFirst(1025,660,100,50);
+                        basicGrids.push(new Grid(1025,660,100,100));
+                        inventoryDiv.style.display = "None";
+                    //// keys
+                        document.addEventListener('keydown', (e) => {
+                            if (e.key === 'ArrowRight' || e.key === 'd') {
+                                keyState.right = true;
+                            }
+                            if (e.key === 'ArrowLeft' || e.key === 'a') {
+                                keyState.left = true;
+                            }
+                            if (e.key === 'ArrowUp' || e.key === 'w') {
+                                keyState.up = true;
+                            }
+                            if (e.key === 'ArrowDown' || e.key === 's') {
+                                keyState.down = true;
+                            }
+                            
+                        });
+                        document.addEventListener('keydown', (s) => {
+                            
+                            if (s.key === 'e'){
+                                commandbar.innerText = "";
+                                let selectedGrid = decideGrid();
+                                if (selectedGrid != null){
+                                    if (selectedGrid.StartX === 960 && selectedGrid.StartY === 170){
+                                        openShop();
+                                    }
+                                    else if(selectedGrid.StartX === 1025 && selectedGrid.StartY === 660){
+                                        sleepAway(); 
+                                    }
+                                    else{
+                                        let gridFarm = SetGridProperties(selectedGrid);
+                                        let index = searchIndexByGrid(gridFarm);
+                                        gridlist[index] = gridFarm;
+                                    }
+                                }
+                            }
+                        });
+                        document.addEventListener('keyup', (e) => {
+                            if (e.key === 'ArrowRight' || e.key === 'd') {
+                                keyState.right = false;
+                            }
+                            if (e.key === 'ArrowLeft' || e.key === 'a') {
+                                keyState.left = false;
+                            }
+                            if (e.key === 'ArrowUp' || e.key === 'w') {
+                                keyState.up = false;
+                            }
+                            if (e.key === 'ArrowDown' || e.key === 's') {
+                                keyState.down = false;
+                            }
+                    
+                        });
+                    ///
+                        LoopEverything();
+                    }
+                }
+              }, 5000);
+        },600)
+    });
+//// volume
     let VolumeSettings = document.getElementById("volumeSettings");
     document.addEventListener("keydown", () =>{
         if (listofSounds.length == 0){
@@ -188,12 +285,9 @@ window.onload = () => {
             }
             listofSounds.forEach(sound => {
                 sound.volume = Volume / 100;
-                
             });
-
         }
     });
-    ///TODO mousemove
     VolumeSettings.addEventListener('input',() =>{
         Volume = Number(VolumeSettings.value);
         listofSounds.forEach(sound => {
@@ -201,67 +295,16 @@ window.onload = () => {
             
         });
     });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight' || e.key === 'd') {
-            keyState.right = true;
-        }
-        if (e.key === 'ArrowLeft' || e.key === 'a') {
-            keyState.left = true;
-        }
-        if (e.key === 'ArrowUp' || e.key === 'w') {
-            keyState.up = true;
-        }
-        if (e.key === 'ArrowDown' || e.key === 's') {
-            keyState.down = true;
-        }
-        
-    });
-    document.addEventListener('keydown', (s) => {
-        
-        if (s.key === 'e'){
-            commandbar.innerText = "";
-            let selectedGrid = decideGrid();
-            if (selectedGrid != null){
-                if (selectedGrid.StartX === 960 && selectedGrid.StartY === 170){
-                    openShop();
-                }
-                else if(selectedGrid.StartX === 1025 && selectedGrid.StartY === 660){
-                    sleepAway(); 
-                }
-                else{
-                    let gridFarm = SetGridProperties(selectedGrid);
-                    let index = searchIndexByGrid(gridFarm);
-                    gridlist[index] = gridFarm;
-                }
-            }
-        }
-    });
-    document.addEventListener('keyup', (e) => {
-        if (e.key === 'ArrowRight' || e.key === 'd') {
-            keyState.right = false;
-        }
-        if (e.key === 'ArrowLeft' || e.key === 'a') {
-            keyState.left = false;
-        }
-        if (e.key === 'ArrowUp' || e.key === 'w') {
-            keyState.up = false;
-        }
-        if (e.key === 'ArrowDown' || e.key === 's') {
-            keyState.down = false;
-        }
+////
 
-    });
-    LoopEverything();
 };
 ///// rain
-
 function drawBlocks() {
     ctx.fillStyle = '#64a9a6';
     for (let block of blocks) {
         ctx.drawImage(document.getElementById("leaf"),block.x,block.y,blockWidth,blockHeight);
     }
 }
-
 function updateBlocks() {
     for (let block of blocks) {
         block.y += blockSpeed;
@@ -290,40 +333,30 @@ function updateBlocks() {
         }
     }
 }
-
-
 function spawnBlock() {
     const x = Math.random() * (canvas.width - blockWidth);
     blocks.push({ x, y: -blockHeight, hasHit: false });
 }
-
-
 function startRainPhase() {
     rainActive = true;
     blockSpawnInterval = setInterval(spawnBlock, 200);
     setTimeout(stopRainPhase, 15000); 
 }
-
 function stopRainPhase() {
     rainActive = false;
     clearInterval(blockSpawnInterval);
     scheduleNextRainPhase();
 }
-
 function stoprain(){
     rainActive = false;
     clearInterval(blockSpawnInterval);
     blocks.length = 0;
 }
-
-
 function scheduleNextRainPhase() {
     const delay = 150000;
     setTimeout(startRainPhase, delay);
 }
-
-
-////
+//// Gridsystem
 function chooseCropByClass(id){
     let cropnameDiv = document.querySelector(id);
     let string = cropnameDiv.id;
@@ -332,7 +365,6 @@ function chooseCropByClass(id){
     return crop;
     
 }
-
 function searchIndexByGrid(grid){
     for (let i = 0; i< gridlist.length;i++ ){
         let item = gridlist[i];
@@ -341,7 +373,6 @@ function searchIndexByGrid(grid){
         }
     }
 }
-
 function saveGrids(){
     let string = "";
     for(let i = 0; i < gridlist.length; i++){
@@ -361,7 +392,6 @@ function saveGrids(){
     }
     setCookie("Grids",string);
 }
-
 function GridSet(stringofgrids){
     let gridsString = stringofgrids.split('|');
     gridsString.forEach(string => {
@@ -388,7 +418,7 @@ function GridSet(stringofgrids){
             crop.kidobottSeed = Number(strings[8]);
             
             grid.virag = crop;
-
+            
             if (strings[9] == "true"){
                 grid.ontozve = true;
             }
@@ -408,126 +438,9 @@ function GridSet(stringofgrids){
             grid.ido = Number(strings[6]);
             grid.playedsound = 0;   
         }
-        
         gridlist.push(grid);
-    });
-    
-    
+    });   
 }
-
-function inventoryOpen(){
-    inventoryDiv.style.display = "block";
-
-    inventory.forEach(item => {
-        document.getElementById(`amount-${item.nev}`).innerText = item.amount;
-    });
-}
-
-
-function setCookie(cname, cvalue, exdays = 1000) {
-    const d = new Date();
-    d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    let expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + "SameSite=None; Secure" + ";path=/";
-}
-
-function getCookie(cname) {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for(let i = 0; i <ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
-}
-
-function saveInventory(){
-    let string = "";
-        for(let i = 0; i < inventory.length; i++){
-            string += inventory[i].nev + "-" + inventory[i].amount + "-" + inventory[i].grownamount;
-            if (i < inventory.length - 1){
-                string += "/";
-            }            
-        }
-        setCookie("Inventory",string);
-        
-}
-function InventorySet(stringItems){
-
-    let items = stringItems.split('/');
-    items.forEach(item => {
-        let crop_ = item.split('-')[0];
-        let amount = Number(item.split('-')[1]);
-        let grownamount = Number(item.split('-')[2]);
-        setAmountByName(amount,crop_,grownamount);
-    });
-}
-
-function startOver(){
-document.getElementById("deathScreen").style.display = "block";
-hasDied++;
-if (hasDied == 1){
-    ogsecs = secs;
-}
-secs = ogsecs;
-ctx.globalAlpha = 0.5;
-ctx.fillStyle = "#gray";
-ctx.fillRect(0,0,canvas.width,canvas.height);
-ctx.globalAlpha = 1.0;
-stopcharacter = true;
-commandbar.innerText = "";
-setCookie("Inventory",0);
-setCookie("Grids",0);
-setCookie("Seconds,Days,daytime",0);
-setCookie("Coins",0);
-setCookie("Health","");
-stoprain();
-document.getElementById("startoverButton").addEventListener('click', () => {
-    inventory = cropGenerating();
-    gridlist = GridLista();
-    secs = 12.5 * 6;
-    days = 0;
-    daytime = "day";
-    coins = 0;
-    stopcharacter = false;
-    healthpoints = 3;
-    hasDied = 0;
-    character.x = canvas.width / 2;
-    character.y = canvas.height / 2;
-    document.getElementById("deathScreen").style.display = "None";
-    setCookie("Inventory",0);
-    setCookie("Grids",0);
-    setCookie("Seconds,Days,daytime",0);
-    setCookie("Coins",0);
-    setCookie("Health","");
-});
-
-}
-
-
-
-function setAmountByName(amount,cropname,grownamount){
-    inventory.forEach(crop => {
-        if(crop.nev === cropname){
-            crop.amount = Number(amount);
-            crop.grownamount = Number(grownamount)
-        }
-    });
-}
-
-function findCropByName(cropname){
-    return inventory.find(crop => crop.nev === cropname);
-}
-
-
-
-
 function getCharactergrids(){
     const coveredGrids = [];
 
@@ -556,7 +469,6 @@ function getCharactergrids(){
     return coveredGrids
 
 }
-
 function decideGrid(){
     let coveredGrids = getCharactergrids();
     let grid = null;
@@ -625,7 +537,6 @@ function decideGrid(){
     pastgrid = grid;
     return grid;
 }
-
 function calculateSize(grid){
     let sumPixels = 0;
 
@@ -646,8 +557,6 @@ function calculateSize(grid){
 
     return sumPixels;
 }
-
-
 function DrawGridByGrid(){
     ctx.lineWidth = 2;
     ctx.strokeStyle = "#67953e";
@@ -659,80 +568,6 @@ function DrawGridByGrid(){
         DrawGrid(grid);
     });
 }
-
-function moveCharacter() {
-    let originalx = character.x;
-    let originaly = character.y;
-    if (stopcharacter == false){
-        if (keyState.right) {
-            character.x += 5;
-        }
-        if (keyState.left) {
-            character.x -= 5;
-        }
-        if (keyState.up) {
-            character.y -= 5;
-        }
-        if (keyState.down) {
-            character.y += 5;
-        }
-
-    }
-    
-    if (character.x < 0) character.x = 0;
-    if (character.y < 0) character.y = 0;
-    if (character.x + character.width > canvas.width) character.x = canvas.width - character.width;
-    if (character.y + character.height > canvas.height) character.y = canvas.height - character.height;
-    if(character.x > 888 && character.y < 110) {
-        character.x = originalx;
-        character.y = originaly;
-    }
- 
-}
-
-function openShop(){
-    window.close();
-    window.open('shop.html');
-}
-
-function jumpintime(JumpedHours){
-    secs += JumpedHours * 12.5;
-    if ((secs % 300) == 0) {
-        hours = 0;
-    }
-    else if(secs > 300) {
-        hours = 0;
-        let oszto = Math.floor(secs / 300);
-        let newsecs = secs - oszto * 300;
-        hours = Math.floor(newsecs / 12.5);   
-    }
-}
-
-function sleepAway(){
-    if (daytime == "dark"){
-        let hoursShouldAdd = 0;
-        if (hours < 6){
-            hoursShouldAdd = (6 - hours) ;
-        } 
-        else{
-            hoursShouldAdd = (24 - hours) + 6;
-            days++;
-           
-        }   
-        jumpintime(hoursShouldAdd);
-        healthpoints += 1;
-        if (healthpoints > 3){
-            healthpoints = 3;
-        }
-        console.log("Sleeping");
-    }
-}
-
-function drawCharacter() {
-    ctx.fillStyle = 'red';
-    ctx.fillRect(character.x,character.y,character.width,character.height);
-}
-
 function SetGridProperties(grid){  
     if (grid.bevetve === false){
         grid.bevetve = true;
@@ -777,7 +612,6 @@ function SetGridProperties(grid){
     }
     return grid;
 }
-
 function seeProperties(currentGrid){ 
     let itemname = document.getElementById("item-name");
     itemname.innerText = "";
@@ -808,7 +642,6 @@ function seeProperties(currentGrid){
         }
     }
 }
-
 function seeGrid(currentGrid){
     let itemname = document.getElementById("item-name");
     itemname.innerText = "";
@@ -818,8 +651,168 @@ function seeGrid(currentGrid){
     else if(currentGrid.StartX === 1025 && daytime == "dark" ){
         commandbar.innerText = "Press [E] to Sleep";
     }
+}   
+/// Inventory
+function inventoryOpen(){
+    inventoryDiv.style.display = "block";
+
+    inventory.forEach(item => {
+        document.getElementById(`amount-${item.nev}`).innerText = item.amount;
+    });
 }
+function saveInventory(){
+    let string = "";
+        for(let i = 0; i < inventory.length; i++){
+            string += inventory[i].nev + "-" + inventory[i].amount + "-" + inventory[i].grownamount;
+            if (i < inventory.length - 1){
+                string += "/";
+            }            
+        }
+        setCookie("Inventory",string);
+        
+}
+function InventorySet(stringItems){
+
+    let items = stringItems.split('/');
+    items.forEach(item => {
+        let crop_ = item.split('-')[0];
+        let amount = Number(item.split('-')[1]);
+        let grownamount = Number(item.split('-')[2]);
+        setAmountByName(amount,crop_,grownamount);
+    });
+}
+function setAmountByName(amount,cropname,grownamount){
+    inventory.forEach(crop => {
+        if(crop.nev === cropname){
+            crop.amount = Number(amount);
+            crop.grownamount = Number(grownamount)
+        }
+    });
+}
+function findCropByName(cropname){
+    return inventory.find(crop => crop.nev === cropname);
+}
+/// Cookie
+export function setCookie(cname, cvalue, exdays = 1000) {
+    const d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    let expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + "SameSite=None; Secure" + ";path=/";
+}
+export function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+///extra functions 
+function mainScreen(){
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("coins-amount").style.display = "none";
+    ctx.fillStyle = "brown";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    document.getElementById("digitalclock").style.display = "none";
+    document.getElementById("daytime-img").style.display = "none";
+    document.getElementById("DayCounter").style.display = "none";
+    document.getElementById("barFrame").style.display = "none";
     
+}
+
+
+function WriteDot(){
+    if (dots < 3){
+        document.getElementById("loading").innerText += ".";
+        dots++;
+    }
+    return dots;
+}
+
+function startOver(){
+document.getElementById("deathScreen").style.display = "block";
+hasDied++;
+if (hasDied == 1){
+    ogsecs = secs;
+}
+secs = ogsecs;
+ctx.globalAlpha = 0.5;
+ctx.fillStyle = "#gray";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+ctx.globalAlpha = 1.0;
+stopcharacter = true;
+commandbar.innerText = "";
+setCookie("Inventory",0);
+setCookie("Grids",0);
+setCookie("Seconds,Days,daytime",0);
+setCookie("Coins",0);
+setCookie("Health","");
+stoprain();
+document.getElementById("startoverButton").addEventListener('click', () => {
+    inventory = cropGenerating();
+    gridlist = GridLista();
+    secs = 12.5 * 6;
+    days = 0;
+    daytime = "day";
+    coins = 0;
+    stopcharacter = false;
+    healthpoints = 3;
+    hasDied = 0;
+    character.x = canvas.width / 2;
+    character.y = canvas.height / 2;
+    document.getElementById("deathScreen").style.display = "None";
+    setCookie("Inventory",0);
+    setCookie("Grids",0);
+    setCookie("Seconds,Days,daytime",0);
+    setCookie("Coins",0);
+    setCookie("Health","");
+});
+
+}
+function openShop(){
+    window.close();
+    window.open('shop2.html');
+}
+function sleepAway(){
+    if (daytime == "dark"){
+        let hoursShouldAdd = 0;
+        if (hours < 6){
+            hoursShouldAdd = (6 - hours) ;
+        } 
+        else{
+            hoursShouldAdd = (24 - hours) + 6;
+            days++;
+           
+        }   
+        jumpintime(hoursShouldAdd);
+        healthpoints += 1;
+        if (healthpoints > 3){
+            healthpoints = 3;
+        }
+        console.log("Sleeping");
+    }
+}
+function jumpintime(JumpedHours){
+    secs += JumpedHours * 12.5;
+    if ((secs % 300) == 0) {
+        hours = 0;
+    }
+    else if(secs > 300) {
+        hours = 0;
+        let oszto = Math.floor(secs / 300);
+        let newsecs = secs - oszto * 300;
+        hours = Math.floor(newsecs / 12.5);   
+    }
+}
+
 function GrowSec(){
     gridlist.forEach(grid => {
         if (grid.ontozve == true){
@@ -828,12 +821,51 @@ function GrowSec(){
     });
     secs++;
 }
+/// Character
+function drawCharacter() {
+    ctx.fillStyle = 'red';
+    ctx.fillRect(character.x,character.y,character.width,character.height);
+}
+function moveCharacter() {
+    let originalx = character.x;
+    let originaly = character.y;
+    if (stopcharacter == false){
+        if (keyState.right) {
+            character.x += 5;
+        }
+        if (keyState.left) {
+            character.x -= 5;
+        }
+        if (keyState.up) {
+            character.y -= 5;
+        }
+        if (keyState.down) {
+            character.y += 5;
+        }
 
+    }
+    
+    if (character.x < 0) character.x = 0;
+    if (character.y < 0) character.y = 0;
+    if (character.x + character.width > canvas.width) character.x = canvas.width - character.width;
+    if (character.y + character.height > canvas.height) character.y = canvas.height - character.height;
+    if(character.x > 888 && character.y < 110) {
+        character.x = originalx;
+        
+        character.y = originaly;
+    }
+ 
+}
+
+////
 function LoopEverything(){
     let itemname = document.getElementById("item-name");
     /// canvas letörlése
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ////
+    if (Award == true){
+        ctx.drawImage(document.getElementById("award"),canvas.width-100,canvas.height-450,80,100);
+    }
     DrawGridByGrid();
     DrawGridByCordsFirst(960,170,175,50);
     DrawGridByCordsFirst(1025,660,100,100);
@@ -866,6 +898,9 @@ function LoopEverything(){
      setCookie("Seconds,Days,daytime",`${secs}/${days}/${daytime}`);
      setCookie("Coins",coins);
      setCookie("Volume",Volume);
+     setCookie("Award",Award);
+
+
     document.getElementById("coins-amount").innerText = coins;
  
      if (inventoryDiv.style.display === "block"){
@@ -903,7 +938,6 @@ function LoopEverything(){
     //// Napok
     document.getElementById("days-number").innerText = Math.floor(days) + 1;
   
-     /// HA ESTE VAN:
     if(daytime == "dark"){
         ctx.globalAlpha = 0.5;
         ctx.fillStyle = "#10296b";
@@ -947,11 +981,11 @@ function LoopEverything(){
     if(coinAnimation % 11 == 0){
         imgsrc =  document.getElementById(`coin-${coinAnimation/11}`);  
     }
+ 
     ctx.drawImage(imgsrc,0,0,40,40);
     coinAnimation++;
     requestAnimationFrame(LoopEverything);
 }
-
 /// Teszt
 function AddAmount(cropname,amount){
     inventory.forEach(crop => {
@@ -960,13 +994,21 @@ function AddAmount(cropname,amount){
         }
     });
 }
-
 function SetTime(secs_){
     secs = secs_;
 }
-/// addcoin
+function AddCoin(coins){
+    coins += coins;
+}
+function clearCookies(){
+    setCookie("Inventory",0);
+    setCookie("Grids",0);
+    setCookie("Seconds,Days,daytime",0);
+    setCookie("Coins","");
+    setCookie("Volume","");
+    setCookie("Health","");
+    setCookie("Upgrade",0);
+    setCookie("Award",false);
+}
 
 
-//DrawAll(10,2,200); -> területvétel esetén
-//// Coin
-//// Terület vétel -> nem rajzolja újra az egészet

@@ -27,7 +27,7 @@ export function cropGenerating(){
     flowers.push(new Crop("Pumpkin","400","750",3,0));
     flowers.push(new Crop("Lettuce","500","900",3,0));
     flowers.push(new Crop("Purplelettuce","500","900",3,0)); 
-    flowers.push(new Crop("Goldencarrot","9990","1500",0,0));
+    flowers.push(new Crop("Goldencarrot","4995","1500",0,0));
 
     return flowers;
 }

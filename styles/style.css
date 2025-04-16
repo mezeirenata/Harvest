@@ -15,6 +15,7 @@ body{
 #img-h1{
     position:fixed;
     left:835px;
+    top:10px;
 }
 
 #frame{
@@ -29,6 +30,42 @@ body{
     /* bottom:160px; */
     width: 500px; 
     height: 50px;
+}
+#digitalclock{
+    background-image: url("/images/clockframe.jpg");
+    background-repeat: no-repeat;
+    width: 160px;
+    height: 60px;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: #002A43;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+    position: absolute!important;
+    right:585px!important;
+    top:135px!important;
+    cursor:default!important;
+}
+#loading{
+    color:white;
+    position:absolute;
+    margin: auto;
+    font-size:35px;
+    top:350px;
+    left:480px;
+}
+
+#play-button,#play-button-clicked{
+    cursor:pointer;
+    position: absolute;
+    margin: auto;
+    font-size:35px;
+    top:280px;
+    width:240px;
+    left:465px;
 }
 
 #barFrame{
@@ -161,8 +198,9 @@ body{
 input[type='range'] {
     overflow: hidden;
     width: 200px;
-    height:15px;
-    border:1px solid rgb(52, 43, 39);
+    height:20px;
+    border:2px solid rgb(95, 82, 82);
+    border-radius:0.5vh;
     background-color: hsla(0, 0%, 100%, 0);
     -webkit-appearance: none;
   }
@@ -179,12 +217,14 @@ input[type='range'] {
   input[type='range']::-webkit-slider-thumb {
     width: 15px;
     -webkit-appearance: none;
-    height:15px;
+    height:20px;
+    margin-top:-2px;
     cursor: pointer;
-    background: #331515;
-    border:2px solid #442525;
-    box-shadow: -200px 0 0 200px #7c462f;
+    background: #b4757571;
+    border:2px solid #ffffff;
+    box-shadow: -200px 0 0 200px #c64949;
   }
+  
 #Banner{
     height:220px;
     width:400px;

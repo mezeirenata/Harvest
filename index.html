@@ -6,7 +6,7 @@
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <title>Harvest</title>
     <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="/test.css">
+    
 </head>
 <body>
     <audio src="sounds/11 pm Animal Crossing_ City Folk (Animal Crossing City Folk OST Extended).mp3" id="backgroundAudio" ></audio>
@@ -19,12 +19,12 @@
     <audio src="sounds/zapsplat_impacts_plants_foliage_weeds_whack_hit_with_stick_single_001_113140.mp3" id="sound-7"></audio>
     <!-- canvas frame -->
     <img src="images/title.png" width="250px" id="img-h1">
-    <img src="images/frame.jpg" alt="" id="frame" width="1195" height="750">
+    <img src="images/frame.jpg"  id="frame" width="1195" height="750">
     <canvas id="canvas" width="1150" height="700"></canvas>
     <input type="range" id="volumeSettings" max="100" min="0" >
-    <img id="soundicon" width="40" src="images/soundicon.png" alt="">
+    <img id="soundicon" width="40" src="images/soundicon.png" >
     <!-- Inventory -->
-    <div id="Inventory" ><img src="images/frame.jpg" alt="" width="550" height="280" id="inventory-bg">
+    <div id="Inventory" ><img src="images/frame.jpg"  width="550" height="280" id="inventory-bg">
    <div id="inv-items" width ="550" >
         <div id="Wheatseed" class="item item-1" >
             <p id="amount-Wheat" class="amount">0</p>
@@ -94,16 +94,16 @@
 </div>
 
 <!-- Time -->
-<div id="digitalclock" style="position: absolute;right:585px;top:135px; cursor:default;" >
+<div id="digitalclock" >
     0:00
 </div>
 <div id="daytime-img">
 
-    <img src="/images/sun.png" alt="" width="300">
-    <img src="/images/moon.png" alt="" width="300" id="moon">
+    <img src="/images/sun.png"  width="300">
+    <img src="/images/moon.png"  width="300" id="moon">
 </div>
-<div >
-    <img id="Banner" src="/images/DayCounter.png" alt="">
+<div id="DayCounter">
+    <img id="Banner" src="/images/DayCounter.png" >
     <img src="images/DayText.png" style="position: absolute;right:230px;top:360px;"  width="200">
     <p  id="day-settings"><span id="days-number">1</span></p>
 </div>
@@ -207,33 +207,42 @@
     <span id="coins-amount">0</span>
 
     <div style="display:none">
-        <img src="images/ready.png" alt="" id="readyCrop">
+        <img src="images/ready.png"  id="readyCrop">
     </div>
     <div style="display:none">
-        <img src="images/leaf.png" alt="" id="leaf">
+        <img src="images/leaf.png"  id="leaf">
     </div>
 
     <div style="display: none;" id="deathScreen">
-        <img src="images/frame.jpg" alt="" style="position: absolute;bottom:350px;left:550px;"width = 400>
+        <img src="images/frame.jpg"  style="position: absolute;bottom:350px;left:550px;"width = 400>
         <p id="restartLine">You lost all of  <br> your healthpoints.</p>
         <button id="startoverButton">Start over</button>
     </div>
     <div style="display:none">
-        <img src="images/fullhp.png" alt="" id="fullhp">
+        <img src="images/fullhp.png"  id="fullhp">
     </div>
     <div style="display:none">
-        <img src="images/2hp.png" alt="" id="2hp">
+        <img src="images/2hp.png"  id="2hp">
     </div>
     <div style="display:none">
-        <img src="images/1hp.png" alt="" id="1hp">
+        <img src="images/1hp.png"  id="1hp">
     </div>
     <div style="display:none">
-        <img src="images/0hp.png" alt="" id="0hp">
+        <img src="images/0hp.png"  id="0hp">
+    </div>
+    <div style="display:none">
+        <img src="images/Award.png"  id="award">
     </div>
 
     <!-- helpbar -->
-    <img id="barFrame" src="images/barframe.jpg" alt="">
+    <img id="barFrame" src="images/barframe.jpg" >
     <div id="helpBar" ><p id="command-line"></p></div>
+    <div  style="width:1151px;height:700px;position: absolute;top:165px;left:159px;">
+        <!-- <img src="images/loading.jpg" width="1151" height="700"id="loadingscreen" > -->
+        <img src="images/playButton.png" id="play-button">
+        <img src="images/playButtonClicked.png" id="play-button-clicked" style="display:none;">
+        <H3 id="loading" >loading</H3>
+    </div>
     <script src="js_files/main.js" type="module"></script>
     <div>
 

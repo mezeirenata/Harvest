@@ -11,8 +11,22 @@ let grid = {
     width : 50,
     height : 50
 }
+export function DrawUpgradeGrid(grow,gcolumn,heightFrom){
+    let alapx_ = 50;
+    let alapy_ = 50;
+    let list = [];
+    for(let j = 1; j < gcolumn+1;j++){
+        for(let i = 1; i < grow+1; i++){
+            let x = alapx_*i
+            let y = heightFrom + alapy_*j;
+            Draw(x,y);
+            
+            list.push(new Grid(x,y,50,50));
 
-
+        }
+    }
+    return list;
+}
 
 export function DrawGridFirst(grow, gcolumn, heightFrom){
     let alapx_ = 50;

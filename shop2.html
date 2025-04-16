@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="images/LittleShop.png">
+    <title>Shop</title>
+    <link rel="stylesheet" href="styles/shop.css">
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<style>
+    #barFrame{
+        bottom:220px;
+        left:0;
+        right:0;
+        margin:auto;
+        display:None;
+    }
+    #helpBar,#command-line{
+        position:relative;
+        right:0;
+        top:90px;
+        left:0;
+        margin:auto;
+    }
+    #inventory-bg{
+        width:1500px;
+        left:210px;
+        top:200px;
+        height:500px;
+
+    }
+    #shoptable{
+        position: absolute;
+        left:200px;
+        top:120px;
+    }
+    #xbutton{
+        position: absolute;
+        width:45px;
+        right:208px;
+        top:199px;
+    }
+    #inv-items{
+        left:260px;
+        top:220px;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        display:flex;
+        width:1400px;
+    }
+    .item{
+        margin:10px 0;
+        text-align: center;
+        border: 2px solid rgb(255, 255, 255);
+        max-height: 35%;
+        border-radius:1vh;
+        height:32%;
+        padding:10px 20px 5px 20px;
+        cursor:default;
+        background-color: rgb(255, 255, 255);
+    }
+    .amount{
+        top:0px;
+    }
+    #coins-amount{
+        top:180px;
+        left:400px;
+    }
+    .button{
+        position:relative;
+        background-color: rgb(85, 141, 85);
+        border:2px solid white;
+        color:white;
+        border-radius:1vh;
+
+        padding:5px 10px;
+        font-size:18px;
+
+        flex-wrap:nowrap;
+        display:flex;
+        font-weight: bold;
+        width:140%;
+        align-items: center;
+
+    }
+    .button img{
+        margin: 0 0 0 10px;
+    }
+    .footer{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height:10px;
+        margin-top: 10px;
+    }
+    .content{
+        height:130px;
+    }
+    .coin-img{ 
+        /* price */
+        width:25px;
+    }
+    .coinimg{
+        position:absolute;
+        left:360px;
+        top:183px;
+        width:35px;
+        height:35px;
+    }
+    #upgrade-1,#upgrade-2,#Award{
+        position:relative;
+        display:flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        width:180px;
+        border:5px solid rgb(255, 255, 255);
+        border-radius: 2vh;
+        height: 220px;
+
+
+    }
+
+    #upgrade-1{
+        background-color: rgb(201, 171, 171);
+        left:250px;
+        top:430px;
+    }
+    #upgrade-2{
+        background-color: rgb(229, 164, 79);
+        left:450px;
+        top:200px;
+    }
+    #Award{
+        background-color: rgb(255, 255, 255);
+        flex-wrap: nowrap;
+        width:200%;
+        left:1050px;
+        bottom:35px;
+    }
+    #Unlock-button span{
+        margin:auto;
+    }
+    #Unlock-button{
+        margin-top:20px;
+        width:45%;
+    }
+    #upgradeArrow,#awardimg{
+        text-align: center;
+        margin: 10px auto;
+        position: relative;
+    }
+    #upgrade-1 .button,#upgrade-2 .button{
+        width:50%;
+        margin:auto;
+    }
+    .ui{
+        width:1500px;
+        height: 500px;
+        text-align: center;
+        display:flex;
+    }
+
+</style>
+<body>
+    <img src="images/title.png"  id="img-h1" width="250px">
+    <div class="ui">
+
+        <img src="images/Shoptable.png"  id="shoptable">
+        <div id="Inventory" ><img src="images/frame.jpg" alt="" width="550" height="280" id="inventory-bg">
+            <div id="inv-items" width ="550" >
+                 <div id="Wheatseed" class="item item-1">
+                     <div class="content">
+                         <p id="amount-Wheat" class="amount">0</p>
+                         <img src="images/Wheatseed.png" id="Wheat">
+                         <p>Wheat 
+                         </p>
+                     </div>
+                     <div class="footer">
+                         <button  id="button-Wheat" class="button button-1" >
+                         </button>
+                     </div>
+                    </div>
+                 <div class="item item-2" id="Carrotseed">
+                     <div class="content">
+                         <p id="amount-Carrot" class="amount">0</p>
+                         <img src="images/Carrotseed.png" id="Carrot">
+                         <p>Carrot</p>
+                     </div>
+                     <div class="footer"><button  id="button-Carrot" class="button button-2" ></button></div>
+                 </div>
+                 <div class="item item-3" id="Cornseed">
+                     <div class="content">
+                         <p id="amount-Corn" class="amount">0</p>
+                         <img src="images/Cornseed.png" id="Corn">
+                         <p>Corn</p>
+                     </div>
+                     <div class="footer"><button  id="button-Corn" class="button button-3" ></button></div>
+                 </div>
+                 <div class="item item-4" id="Eggplantseed">
+                     <div class="content">
+                         <p id="amount-Eggplant" class="amount">0</p>
+                         <img src="images/Eggplantseed.png" id="Eggplant">
+                         <p>Eggplant</p>
+                     </div>
+                     <div class="footer"><button  id="button-Eggplant" class="button button-4" ></button></div>
+                 </div>
+                 <div class="item item-5" id="Turnipseed">
+                     <div class="content">
+                         <p id="amount-Turnip" class="amount">0</p>
+                         <img src="images/Turnipseed.png" id="Turnip">
+                         <p>Turnip</p>
+                     </div>
+                     <div class="footer"><button  id="button-Turnip" class="button button-5" ></button></div>
+                 </div>
+                 <div class="item item-6" id="Tomatoseed">
+                     <div class="content">
+                         <p id="amount-Tomato" class="amount">0</p>
+                         <img src="images/Tomatoseed.png" id="Tomato">
+                         <p>Tomato</p>
+                     </div>
+                     <div class="footer"><button  id="button-Tomato" class="button button-6" ></button></div>
+                 </div>
+                 <div class="item item-7" id="Potatoseed">
+                     <div class="content">
+                         <p id="amount-Potato" class="amount">0</p>
+                         <img src="images/Potatoseed.png" id="Potato">
+                         <p>Potato</p>
+                     </div>
+                     <div class="footer"><button  id="button-Potato" class="button button-7" ></button></div>
+                 </div> 
+                 <div class="item item-8" id="Cauliflowerseed">
+                     <div class="content">
+                         <p id="amount-Cauliflower" class="amount">0</p>
+                         <img src="images/Cauliflowerseed.png" id="Cauliflower">
+                         <p>Cauli- <br> flower</p>
+                     </div>
+                     <div class="footer"><button  id="button-Cauliflower" class="button button-8" ></button></div>
+                    
+                    </div> 
+                 <div class="item item-9" id="Pumpkinseed">
+                     <div class="content">
+                         <p id="amount-Pumpkin" class="amount">0</p>
+                         <img src="images/Pumpkinseed.png" id="Pumpkin">
+                         <p>Pumpkin</p>
+                     </div>
+                     <div class="footer"><button  id="button-Pumpkin" class="button button-9" ></button></div>
+                 </div> 
+                 <div class="item item-10" id="Lettuceseed">
+                     <div class="content">
+                         <p id="amount-Lettuce" class="amount">0</p>
+                         <img src="images/Lettuceseed.png" id="Lettuce">
+                         <p >Lettuce</p>
+                     </div>
+                     <div class="footer"><button  id="button-Lettuce" class="button button-10" ></button></div>
+                 </div> 
+                 <div class="item item-11" id="Purplelettuceseed">
+                     <div class="content">
+                         <p id="amount-Purplelettuce" class="amount">0</p>
+                         <img src="images/Purplelettuceseed.png" id="Purplelettuce">
+                         <p >Purple <br> lettuce</p>
+                     </div>
+                     <div class="footer"><button  id="button-Purplelettuce" class="button button-11" ></button></div>
+                 </div>
+                 <div class="item item-12" id="Goldencarrotseed">
+                     <div class="content">
+                         <p id="amount-Goldencarrot" class="amount">0</p>
+                         <img src="images/Goldencarrotseed.png" id="Goldencarrot">
+                         <p >Golden carrot</p>
+                     </div>
+                     <div class="footer"><button  id="button-Goldencarrot" class="button button-12" ></button></div>
+                 </div> 
+                 
+                </div>
+                <div id="upgrade-1">
+                    <img src="images/upgrade.png" width="100" height="120" id="upgradeArrow" alt="">
+
+                    Grid Upgrade I. 
+                    <div class="footer">
+                    <button  id="button-Upgrade-1" class="button" >
+                        <span id="upgrade-price">1000</span> 
+                        <img src="images/coin1.png" width="25" alt=""> 
+                    </button>
+                    <p id="Owned-1" style="color:rgb(79, 59, 59); font-weight:bold;font-size:18px;position: absolute;display:none;">Owned</p>
+                    </div>
+                </div>
+                <div id="upgrade-2">
+                    <img src="images/upgrade.png" width="100" height="120" id="upgradeArrow" alt="">
+
+                    Grid Upgrade II. 
+                    <div class="footer">
+                    <button  id="button-Upgrade-2" class="button" >
+                        <span id="upgrade-price">4000</span> 
+                        <img src="images/coin1.png" width="25" alt=""> 
+                    </button>
+                    <p id="Owned-2" style="color:rgb(79, 59, 59); font-weight:bold;font-size:18px;position: absolute;display:none;">Owned</p>
+                    </div>
+                </div>
+                <div id="Award">
+                    <img src="images/Award.png" width="100" height="120" id="awardimg" alt="">
+
+                    Award 
+                    <div class="footer">
+                    <button  id="Unlock-button" class="button" >
+                        <span>Unlock</span>  
+                    </button>
+                    <p id="Owned-3" style="color:rgb(79, 59, 59); font-weight:bold;font-size:18px;position: absolute;display:none;">Owned</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img id="barFrame" src="images/barframe.jpg" alt="">
+        <div id="helpBar" ><p id="command-line"></p></div>
+     <img src="images/Xbutton.png"  id="xbutton">
+     <div>
+        <img class="coinimg"  width="25" height="25" src="images/coin1.png" id="coin-1">
+    </div>
+    <div>
+        <img  style="display:none;" class="coinimg" width="25" height="25" src="images/coin2.png" id="coin-2">
+    </div>
+    <div>
+        <img  style="display:none;" class="coinimg" width="25" height="25" src="images/coin3.png" id="coin-3">
+    </div>
+    <div>
+        <img  style="display:none;" class="coinimg" width="25" height="25" src="images/coin4.png" id="coin-4">
+    </div>
+    <span id="coins-amount">0</span>
+
+    <script src="js_files/shop2.js" type="module"></script>
+    
+</body>
+
+</html>
