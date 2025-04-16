@@ -78,13 +78,15 @@ body{
 }
 #startoverButton{
     background-color: rgb(199, 73, 73);
-    border:none;
     color:white;
     padding:10px 20px;
+    border:none;
+    width:100px;
+    height:25px;
     font-weight:bolder;
     font-size:18px;
     font-family:monospace;
-    position:absolute;
+    position:fixed;
     left:680px;
     bottom:380px;
 }

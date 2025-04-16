@@ -10,6 +10,12 @@ let inventory = cropGenerating();
 let listofSounds = [];
 let dots = 0;
 
+let counter = 0;
+let tractor= {
+    x: 0,
+    y: 370
+};
+
 const inventoryDiv = document.getElementById("Inventory");
 inventoryDiv.style.display = "None";
 
@@ -163,11 +169,27 @@ window.onload = () => {
         setTimeout(() => {
             document.getElementById("play-button").style.display = "none";
             document.getElementById("loading").style.display = "block";
+
             const interval = setInterval(() => {
                 dots = WriteDot();
             },1000);
+            const tractorint = setInterval(() => {
+                ctx.drawImage(document.getElementById("loading-bg"),0,0,canvas.width,canvas.height);
+                if(counter > 2){
+                    counter = 1;
+                }
+                if (counter == 1){
+                    ctx.drawImage(document.getElementById("tractorimg"),tractor.x,tractor.y,100,100);
+                }
+                else if(counter == 2){
+                    ctx.drawImage(document.getElementById("tractorimg2"),tractor.x,tractor.y,100,100);
+                }
+                counter++;
+                tractor.x++;
+            },1);
             setTimeout(() => {
                 clearInterval(interval);
+                clearInterval(tractorint);
                 dots = 4;
                 if (dots > 3){
                     document.getElementById("loading").style.display = "none";
@@ -187,7 +209,6 @@ window.onload = () => {
                         }
                         let upgrade = Number(getCookie("Upgrade"));
                         for(let j = 1; j < upgrade+1; j++){
-                            console.log("meow");
                             let newGrids = DrawUpgradeGrid(10,2,100 + j*150); 
                             newGrids.forEach(grid =>{
                             gridlist.push(grid);
@@ -251,7 +272,9 @@ window.onload = () => {
                     
                         });
                     ///
-                        LoopEverything();
+                    
+                    ///   
+                    LoopEverything();
                     }
                 }
               }, 5000);
@@ -719,8 +742,9 @@ export function getCookie(cname) {
 function mainScreen(){
     document.getElementById("loading").style.display = "none";
     document.getElementById("coins-amount").style.display = "none";
-    ctx.fillStyle = "brown";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
+/// TRAKTOR
+    ctx.drawImage(document.getElementById("loading-bg"),0,0,canvas.width,canvas.heigt);
+
     document.getElementById("digitalclock").style.display = "none";
     document.getElementById("daytime-img").style.display = "none";
     document.getElementById("DayCounter").style.display = "none";
@@ -750,13 +774,9 @@ ctx.fillRect(0,0,canvas.width,canvas.height);
 ctx.globalAlpha = 1.0;
 stopcharacter = true;
 commandbar.innerText = "";
-setCookie("Inventory",0);
-setCookie("Grids",0);
-setCookie("Seconds,Days,daytime",0);
-setCookie("Coins",0);
-setCookie("Health","");
 stoprain();
-document.getElementById("startoverButton").addEventListener('click', () => {
+document.getElementById("startoverButton").addEventListener('click', () =>{
+    console.log("meow");
     inventory = cropGenerating();
     gridlist = GridLista();
     secs = 12.5 * 6;
@@ -775,6 +795,7 @@ document.getElementById("startoverButton").addEventListener('click', () => {
     setCookie("Coins",0);
     setCookie("Health","");
 });
+
 
 }
 function openShop(){
@@ -872,6 +893,8 @@ function LoopEverything(){
     gridlist.forEach(grid => {
         DrawReadyMark(grid);
     });
+
+
     ///    
     digital();
     /// karakterre vonatkozó frissülő adatok
@@ -900,7 +923,7 @@ function LoopEverything(){
      setCookie("Volume",Volume);
      setCookie("Award",Award);
 
-
+   ///
     document.getElementById("coins-amount").innerText = coins;
  
      if (inventoryDiv.style.display === "block"){
@@ -924,6 +947,9 @@ function LoopEverything(){
         }
 
     }
+    
+
+    
     //// rain
     updateBlocks();
     drawBlocks();
@@ -997,7 +1023,7 @@ function AddAmount(cropname,amount){
 function SetTime(secs_){
     secs = secs_;
 }
-function AddCoin(coins){
+function AddCoins(coins){
     coins += coins;
 }
 function clearCookies(){
