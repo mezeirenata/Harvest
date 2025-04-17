@@ -16,7 +16,7 @@ let tractor= {
     x: 0,
     y: 370
 };
-
+clearCookies();
 const inventoryDiv = document.getElementById("Inventory");
 inventoryDiv.style.display = "None";
 
@@ -49,6 +49,7 @@ let hours = 0;
 let days = 0;
 let daytime = "day";
 let Volume = 50;
+
 
 let upgrade = 0;
 let imgsrc = document.getElementById("coin-1");
@@ -464,7 +465,9 @@ function stopRainPhase() {
     setTimeout(() => {
         if ( healthpoints == 3){
             coins += 25;
+  
         }
+
     }, 7000);
 
     scheduleNextRainPhase();
@@ -645,7 +648,7 @@ function decideGrid(){
         }
     });
 
-    if (grid == null){
+    if (grid == null ){
         commandbar.innerText = "";
     }
     if (pastgrid != grid){
@@ -919,6 +922,7 @@ function sleepAway(){
            
         }   
         jumpintime(hoursShouldAdd);
+        stoprain();
         healthpoints += 1;
         if (healthpoints > 3){
             healthpoints = 3;
