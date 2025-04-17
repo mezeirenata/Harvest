@@ -1,5 +1,4 @@
 // <
-/// playgomb
 import {DrawGrid,DrawUpgradeGrid,DrawReadyMark, DrawGridFirst, GridLista, canvas, ctx, DrawGridByCordsFirst,DrawGridUpgrade} from './canvas.js';
 import {Player} from './player.js';
 import {Grid} from './grid.js';
@@ -8,8 +7,10 @@ const commandbar = document.getElementById('command-line');
 let character =  new Player(canvas.width / 2, canvas.height / 2, 35,35);
 let inventory = cropGenerating();
 let listofSounds = [];
-let dots = 0;
 
+
+let visitedShop = false;
+let dots = 0;
 let counter = 0;
 let tractor= {
     x: 0,
@@ -55,9 +56,15 @@ let coinAnimation = 48;
 
 let stopcharacter = false;
 
-clearCookies();
+// clearCookies();
 
 function Cookies(){
+    if (getCookie("Visitedshop") == "true"){
+        visitedShop = true;
+    }
+    else{
+        setCookie("Visitedhop",visitedShop);
+    }
     if (getCookie("Award") == "true"){
         Award = true;
     }
@@ -157,129 +164,215 @@ function digital() {
 }
 window.onload = () => {
     Cookies();
-    mainScreen();
-    document.getElementById("play-button").addEventListener('click', () => {
-        document.getElementById("play-button").style.display = "none";
-        document.getElementById("play-button-clicked").style.display = "block";
-       
-        setTimeout(() => {
-            document.getElementById("play-button-clicked").style.display = "none";
-            document.getElementById("play-button").style.display = "block";
-        },250);
-        setTimeout(() => {
+    if (visitedShop != true){
+        mainScreen();
+        document.getElementById("play-button").addEventListener('click', () => {
             document.getElementById("play-button").style.display = "none";
-            document.getElementById("loading").style.display = "block";
-
-            const interval = setInterval(() => {
-                dots = WriteDot();
-            },1000);
-            const tractorint = setInterval(() => {
-                ctx.drawImage(document.getElementById("loading-bg"),0,0,canvas.width,canvas.height);
-                if(counter > 2){
-                    counter = 1;
-                }
-                if (counter == 1){
-                    ctx.drawImage(document.getElementById("tractorimg"),tractor.x,tractor.y,100,100);
-                }
-                else if(counter == 2){
-                    ctx.drawImage(document.getElementById("tractorimg2"),tractor.x,tractor.y,100,100);
-                }
-                counter++;
-                tractor.x++;
-            },1);
+            document.getElementById("play-button-clicked").style.display = "block";
+           
             setTimeout(() => {
-                clearInterval(interval);
-                clearInterval(tractorint);
-                dots = 4;
-                if (dots > 3){
-                    document.getElementById("loading").style.display = "none";
-                    document.getElementById("coins-amount").style.display = "block";
-                    document.getElementById("digitalclock").style.display = "flex";
-                    document.getElementById("daytime-img").style.display = "block";
-                    document.getElementById("DayCounter").style.display = "block";
-                    document.getElementById("barFrame").style.display = "block";
-                    {
-                        setInterval(GrowSec,1000);
-                        setTimeout(startRainPhase,150000);
-                    //// draw
-                        DrawGridFirst(10,2,100);
-                        if (Award == true){
-                      
-                            ctx.drawImage(document.getElementById("award"),0,canvas.height,50,50);
-                        }
-                        let upgrade = Number(getCookie("Upgrade"));
-                        for(let j = 1; j < upgrade+1; j++){
-                            let newGrids = DrawUpgradeGrid(10,2,100 + j*150); 
-                            newGrids.forEach(grid =>{
-                            gridlist.push(grid);
-                        });
-                        }
-                    
-                        DrawGridByCordsFirst(960,170,175,50);
-                        basicGrids.push(new Grid(960,170,175,50));
-                        DrawGridByCordsFirst(1025,660,100,50);
-                        basicGrids.push(new Grid(1025,660,100,100));
-                        inventoryDiv.style.display = "None";
-                    //// keys
-                        document.addEventListener('keydown', (e) => {
-                            if (e.key === 'ArrowRight' || e.key === 'd') {
-                                keyState.right = true;
+                document.getElementById("play-button-clicked").style.display = "none";
+                document.getElementById("play-button").style.display = "block";
+            },250);
+            setTimeout(() => {
+                document.getElementById("play-button").style.display = "none";
+                document.getElementById("loading").style.display = "block";
+    
+                const interval = setInterval(() => {
+                    dots = WriteDot();
+                },1000);
+                const tractorint = setInterval(() => {
+                    ctx.drawImage(document.getElementById("loading-bg"),0,0,canvas.width,canvas.height);
+                    if(counter > 2){
+                        counter = 1;
+                    }
+                    if (counter == 1){
+                        ctx.drawImage(document.getElementById("tractorimg"),tractor.x,tractor.y,100,100);
+                    }
+                    else if(counter == 2){
+                        ctx.drawImage(document.getElementById("tractorimg2"),tractor.x,tractor.y,100,100);
+                    }
+                    counter++;
+                    tractor.x++;
+                },1);
+                setTimeout(() => {
+                    clearInterval(interval);
+                    clearInterval(tractorint);
+                    dots = 4;
+                    if (dots > 3){
+                        document.getElementById("loading").style.display = "none";
+                        document.getElementById("coins-amount").style.display = "block";
+                        document.getElementById("digitalclock").style.display = "flex";
+                        document.getElementById("daytime-img").style.display = "block";
+                        document.getElementById("DayCounter").style.display = "block";
+                        document.getElementById("barFrame").style.display = "block";
+                        {
+                            setInterval(GrowSec,1000);
+                            setTimeout(startRainPhase,150000);
+                        //// draw
+                            DrawGridFirst(10,2,100);
+                            if (Award == true){
+                          
+                                ctx.drawImage(document.getElementById("award"),0,canvas.height,50,50);
                             }
-                            if (e.key === 'ArrowLeft' || e.key === 'a') {
-                                keyState.left = true;
+                            let upgrade = Number(getCookie("Upgrade"));
+                            for(let j = 1; j < upgrade+1; j++){
+                                let newGrids = DrawUpgradeGrid(10,2,100 + j*150); 
+                                newGrids.forEach(grid =>{
+                                gridlist.push(grid);
+                            });
                             }
-                            if (e.key === 'ArrowUp' || e.key === 'w') {
-                                keyState.up = true;
-                            }
-                            if (e.key === 'ArrowDown' || e.key === 's') {
-                                keyState.down = true;
-                            }
-                            
-                        });
-                        document.addEventListener('keydown', (s) => {
-                            
-                            if (s.key === 'e'){
-                                commandbar.innerText = "";
-                                let selectedGrid = decideGrid();
-                                if (selectedGrid != null){
-                                    if (selectedGrid.StartX === 960 && selectedGrid.StartY === 170){
-                                        openShop();
-                                    }
-                                    else if(selectedGrid.StartX === 1025 && selectedGrid.StartY === 660){
-                                        sleepAway(); 
-                                    }
-                                    else{
-                                        let gridFarm = SetGridProperties(selectedGrid);
-                                        let index = searchIndexByGrid(gridFarm);
-                                        gridlist[index] = gridFarm;
+                        
+                            DrawGridByCordsFirst(960,170,175,50);
+                            basicGrids.push(new Grid(960,170,175,50));
+                            DrawGridByCordsFirst(1025,660,100,50);
+                            basicGrids.push(new Grid(1025,660,100,100));
+                            inventoryDiv.style.display = "None";
+                        //// keys
+                            document.addEventListener('keydown', (e) => {
+                                if (e.key === 'ArrowRight' || e.key === 'd') {
+                                    keyState.right = true;
+                                }
+                                if (e.key === 'ArrowLeft' || e.key === 'a') {
+                                    keyState.left = true;
+                                }
+                                if (e.key === 'ArrowUp' || e.key === 'w') {
+                                    keyState.up = true;
+                                }
+                                if (e.key === 'ArrowDown' || e.key === 's') {
+                                    keyState.down = true;
+                                }
+                                
+                            });
+                            document.addEventListener('keydown', (s) => {
+                                
+                                if (s.key === 'e'){
+                                    commandbar.innerText = "";
+                                    let selectedGrid = decideGrid();
+                                    if (selectedGrid != null){
+                                        if (selectedGrid.StartX === 960 && selectedGrid.StartY === 170){
+                                            openShop();
+                                        }
+                                        else if(selectedGrid.StartX === 1025 && selectedGrid.StartY === 660){
+                                            sleepAway(); 
+                                        }
+                                        else{
+                                            let gridFarm = SetGridProperties(selectedGrid);
+                                            let index = searchIndexByGrid(gridFarm);
+                                            gridlist[index] = gridFarm;
+                                        }
                                     }
                                 }
-                            }
-                        });
-                        document.addEventListener('keyup', (e) => {
-                            if (e.key === 'ArrowRight' || e.key === 'd') {
-                                keyState.right = false;
-                            }
-                            if (e.key === 'ArrowLeft' || e.key === 'a') {
-                                keyState.left = false;
-                            }
-                            if (e.key === 'ArrowUp' || e.key === 'w') {
-                                keyState.up = false;
-                            }
-                            if (e.key === 'ArrowDown' || e.key === 's') {
-                                keyState.down = false;
-                            }
-                    
-                        });
-                    ///
-                    
-                    ///   
-                    LoopEverything();
+                            });
+                            document.addEventListener('keyup', (e) => {
+                                if (e.key === 'ArrowRight' || e.key === 'd') {
+                                    keyState.right = false;
+                                }
+                                if (e.key === 'ArrowLeft' || e.key === 'a') {
+                                    keyState.left = false;
+                                }
+                                if (e.key === 'ArrowUp' || e.key === 'w') {
+                                    keyState.up = false;
+                                }
+                                if (e.key === 'ArrowDown' || e.key === 's') {
+                                    keyState.down = false;
+                                }
+                        
+                            });
+                        ///
+                        
+                        ///   
+                        LoopEverything();
+                        }
                     }
-                }
-              }, 5000);
-        },600)
-    });
+                  }, 5000);
+            },600)
+        });
+    }
+    else{
+        visitedShop = false;
+        stopcharacter = false;
+        document.getElementById("play-button").style.display = "none";
+        document.getElementById("loading").style.display = "none";
+        setInterval(GrowSec,1000);
+                            setTimeout(startRainPhase,150000);
+                        //// draw
+                            DrawGridFirst(10,2,100);
+                            if (Award == true){
+                          
+                                ctx.drawImage(document.getElementById("award"),0,canvas.height,50,50);
+                            }
+                            let upgrade = Number(getCookie("Upgrade"));
+                            for(let j = 1; j < upgrade+1; j++){
+                                let newGrids = DrawUpgradeGrid(10,2,100 + j*150); 
+                                newGrids.forEach(grid =>{
+                                gridlist.push(grid);
+                            });
+                            }
+                        
+                            DrawGridByCordsFirst(960,170,175,50);
+                            basicGrids.push(new Grid(960,170,175,50));
+                            DrawGridByCordsFirst(1025,660,100,50);
+                            basicGrids.push(new Grid(1025,660,100,100));
+                            inventoryDiv.style.display = "None";
+                        //// keys
+                            document.addEventListener('keydown', (e) => {
+                                if (e.key === 'ArrowRight' || e.key === 'd') {
+                                    keyState.right = true;
+                                }
+                                if (e.key === 'ArrowLeft' || e.key === 'a') {
+                                    keyState.left = true;
+                                }
+                                if (e.key === 'ArrowUp' || e.key === 'w') {
+                                    keyState.up = true;
+                                }
+                                if (e.key === 'ArrowDown' || e.key === 's') {
+                                    keyState.down = true;
+                                }
+                                
+                            });
+                            document.addEventListener('keydown', (s) => {
+                                
+                                if (s.key === 'e'){
+                                    commandbar.innerText = "";
+                                    let selectedGrid = decideGrid();
+                                    if (selectedGrid != null){
+                                        if (selectedGrid.StartX === 960 && selectedGrid.StartY === 170){
+                                            openShop();
+                                        }
+                                        else if(selectedGrid.StartX === 1025 && selectedGrid.StartY === 660){
+                                            sleepAway(); 
+                                        }
+                                        else{
+                                            let gridFarm = SetGridProperties(selectedGrid);
+                                            let index = searchIndexByGrid(gridFarm);
+                                            gridlist[index] = gridFarm;
+                                        }
+                                    }
+                                }
+                            });
+                            document.addEventListener('keyup', (e) => {
+                                if (e.key === 'ArrowRight' || e.key === 'd') {
+                                    keyState.right = false;
+                                }
+                                if (e.key === 'ArrowLeft' || e.key === 'a') {
+                                    keyState.left = false;
+                                }
+                                if (e.key === 'ArrowUp' || e.key === 'w') {
+                                    keyState.up = false;
+                                }
+                                if (e.key === 'ArrowDown' || e.key === 's') {
+                                    keyState.down = false;
+                                }
+                        
+                            });
+                        ///
+                        
+                        ///   
+                        LoopEverything();
+    }
+    
+  
 //// volume
     let VolumeSettings = document.getElementById("volumeSettings");
     document.addEventListener("keydown", () =>{
@@ -776,9 +869,15 @@ stopcharacter = true;
 commandbar.innerText = "";
 stoprain();
 document.getElementById("startoverButton").addEventListener('click', () =>{
-    console.log("meow");
     inventory = cropGenerating();
-    gridlist = GridLista();
+    gridlist.forEach(grid =>{
+        grid.bevetve = false;
+        grid.virag = null;
+        grid.ontozve = false;
+        grid.viragKivalasztva = null;
+        grid.kivalasztott = false;
+        grid.ido = 0;
+    });
     secs = 12.5 * 6;
     days = 0;
     daytime = "day";
@@ -922,7 +1021,7 @@ function LoopEverything(){
      setCookie("Coins",coins);
      setCookie("Volume",Volume);
      setCookie("Award",Award);
-
+     setCookie("Visitedshop",false);
    ///
     document.getElementById("coins-amount").innerText = coins;
  
@@ -1035,6 +1134,7 @@ function clearCookies(){
     setCookie("Health","");
     setCookie("Upgrade",0);
     setCookie("Award",false);
+    setCookie("Visitedshop",false);
 }
 
 

@@ -14,6 +14,8 @@ let upgrade2 = document.getElementById("button-Upgrade-2");
 let hasPressed = false;
 let Award = false;
 
+setCookie("Visitedshop", true);
+
 if (getCookie("Award") == "true"){
     Award = true;
 }
