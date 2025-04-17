@@ -120,7 +120,7 @@ window.onload = () => {
                 document.querySelector(`.button-${i}`).style.cursor = "pointer";
             }
            document.querySelector(`.button-${i}`).addEventListener('click', (e) => {
-               let crop = chooseCropByClass(`.item-${i}`);
+               let crop = chooseCropByClass(`.button-${i}`);
                 if(coins >= crop.price){
                     coins -= crop.price;
                     crop.amount++;

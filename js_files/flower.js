@@ -16,7 +16,7 @@ export class Crop{
 export function cropGenerating(){
     let flowers = [];
     
-    flowers.push(new Crop("Wheat","25","300",1,1));
+    flowers.push(new Crop("Wheat","25","100",1,1));
     flowers.push(new Crop("Carrot","50","300",2,0));
     flowers.push(new Crop("Corn","50","600",2,0));
     flowers.push(new Crop("Eggplant","100","600",1,0));
@@ -27,7 +27,7 @@ export function cropGenerating(){
     flowers.push(new Crop("Pumpkin","400","750",3,0));
     flowers.push(new Crop("Lettuce","500","900",3,0));
     flowers.push(new Crop("Purplelettuce","500","900",3,0)); 
-    flowers.push(new Crop("Goldencarrot","4995","1500",0,0));
+    flowers.push(new Crop("Goldencarrot","4995","900",0,0));
 
     return flowers;
 }

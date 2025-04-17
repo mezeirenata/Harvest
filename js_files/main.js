@@ -208,7 +208,7 @@ window.onload = () => {
                         document.getElementById("barFrame").style.display = "block";
                         {
                             setInterval(GrowSec,1000);
-                            setTimeout(startRainPhase,150000);
+                            setTimeout(startRainPhase,60000);
                         //// draw
                             DrawGridFirst(10,2,100);
                             if (Award == true){
