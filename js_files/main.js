@@ -7,7 +7,7 @@ const commandbar = document.getElementById('command-line');
 let character =  new Player(canvas.width / 2, canvas.height / 2, 35,35);
 let inventory = cropGenerating();
 let listofSounds = [];
-clearCookies();
+
 
 let visitedShop = false;
 let dots = 0;
