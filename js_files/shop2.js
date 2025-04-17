@@ -106,7 +106,6 @@ function neededItems(){
 }
 
 window.onload = () => {
-    let neededItems_ = neededItems();
     RefreshInv();
 
         for(let i = 1; i < 13; i++){
@@ -132,10 +131,12 @@ window.onload = () => {
                 }
            });
        }
-       
-       if (upgrade > 0){
+       upgrade2.style.display = "none";
+       if (upgrade == 1){
             upgrade1.style.display = "none";
             document.getElementById("Owned-1").style.display = "block";
+
+            upgrade2.style.display = "block";
        }
        if (upgrade == 2){
         upgrade2.style.display = "none";
@@ -185,7 +186,7 @@ window.onload = () => {
    });
         let unlock_ = document.getElementById("Unlock-button");
         unlock_.addEventListener('mouseover', () => {
-            if (neededItems_.length == 0){
+            if (neededItems().length == 0){
                 unlock_.style.cursor = "pointer";
             }
             else{
@@ -197,9 +198,7 @@ window.onload = () => {
             }
             
         });
-      
-            /// onclick
-            /// ha üres oké, sikeres vétel, console.log, mentse el sütiben
+
         unlock_.addEventListener('mouseout',() => {
             document.getElementById("barFrame").style.display = "none";
             document.getElementById("command-line").style.display = "none";
@@ -231,7 +230,17 @@ window.onload = () => {
 };
 
 function LoopCycle(){
-    
+    for(let i = 1; i < 13; i++){
+        let crop = chooseCropByClass(`.button-${i}`);
+        if (coins < crop.price){
+            document.querySelector(`.button-${i}`).style.cursor = "not-allowed";
+            document.querySelector(`.item-${i}`).style.backgroundColor = "#C0C0C0";
+            document.querySelector(`.item-${i}`).style.border = "2px solid gray";
+        }
+        else{
+            document.querySelector(`.button-${i}`).style.cursor = "pointer";
+        }
+    }
     if(hasPressed == true){
           let strings = "You need the following plants: \n";
         for(let i = 0; i < neededItems().length; i++){
@@ -255,10 +264,25 @@ function LoopCycle(){
         imgsrc = document.getElementById(`coin-${coinanimation/11}`);  
         imgsrc.style.display = "inline-block";
     }
+    upgrade2.style.display = "none";
+    if (upgrade == 1){
+         upgrade1.style.display = "none";
+         document.getElementById("Owned-1").style.display = "block";
+
+         upgrade2.style.display = "flex";
+    }
+    if (upgrade == 2){
+     upgrade2.style.display = "none";
+     document.getElementById("Owned-2").style.display = "block";
+    }
+   if (Award == true){
+    document.getElementById("Unlock-button").style.display = "none";
+    document.getElementById("Owned-3").style.display = "block";
+   }
     RefreshInv();
     saveInventory();
     setCookie("Award",Award);
-    setCookie("Upgrade");
+    setCookie("Upgrade", upgrade);
     document.getElementById("coins-amount").innerText = coins;
     setCookie("Coins",coins);
     requestAnimationFrame(LoopCycle);

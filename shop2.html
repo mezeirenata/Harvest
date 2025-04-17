@@ -143,8 +143,9 @@
         margin:auto;
     }
     #Unlock-button{
-        margin-top:20px;
-        width:45%;
+        display:flex;
+        width:100%;
+        padding:5px 20px;
     }
     #upgradeArrow,#awardimg{
         text-align: center;
@@ -302,9 +303,12 @@
 
                     Award 
                     <div class="footer">
-                    <button  id="Unlock-button" class="button" >
-                        <span>Unlock</span>  
-                    </button>
+                    <div id="Unlock">
+                        <button  id="Unlock-button" class="button" >
+                            <span>Unlock</span>  
+                        </button>
+
+                    </div>
                     <p id="Owned-3" style="color:rgb(79, 59, 59); font-weight:bold;font-size:18px;position: absolute;display:none;">Owned</p>
                     </div>
                 </div>

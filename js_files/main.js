@@ -7,7 +7,7 @@ const commandbar = document.getElementById('command-line');
 let character =  new Player(canvas.width / 2, canvas.height / 2, 35,35);
 let inventory = cropGenerating();
 let listofSounds = [];
-
+clearCookies();
 
 let visitedShop = false;
 let dots = 0;
@@ -208,7 +208,7 @@ window.onload = () => {
                         document.getElementById("barFrame").style.display = "block";
                         {
                             setInterval(GrowSec,1000);
-                            setTimeout(startRainPhase,60000);
+                            setTimeout(startRainPhase,1000);
                         //// draw
                             DrawGridFirst(10,2,100);
                             if (Award == true){
@@ -295,7 +295,7 @@ window.onload = () => {
         document.getElementById("play-button").style.display = "none";
         document.getElementById("loading").style.display = "none";
         setInterval(GrowSec,1000);
-                            setTimeout(startRainPhase,150000);
+                            setTimeout(startRainPhase,50000);
                         //// draw
                             DrawGridFirst(10,2,100);
                             if (Award == true){
@@ -461,6 +461,12 @@ function startRainPhase() {
 function stopRainPhase() {
     rainActive = false;
     clearInterval(blockSpawnInterval);
+    setTimeout(() => {
+        if ( healthpoints == 3){
+            coins += 25;
+        }
+    }, 7000);
+
     scheduleNextRainPhase();
 }
 function stoprain(){
@@ -469,7 +475,7 @@ function stoprain(){
     blocks.length = 0;
 }
 function scheduleNextRainPhase() {
-    const delay = 150000;
+    const delay = 50000;
     setTimeout(startRainPhase, delay);
 }
 //// Gridsystem
@@ -1078,16 +1084,16 @@ function LoopEverything(){
 
     ////
     if (healthpoints == 3){
-        ctx.drawImage(document.getElementById("fullhp"),80,2,100,40);
+        ctx.drawImage(document.getElementById("fullhp"),0,35,100,40);
     }    
     else if(healthpoints == 2){
-        ctx.drawImage(document.getElementById("2hp"),80,2,100,40);
+        ctx.drawImage(document.getElementById("2hp"),0,35,100,40);
     }
     else if(healthpoints == 1){
-        ctx.drawImage(document.getElementById("1hp"),80,2,100,40);
+        ctx.drawImage(document.getElementById("1hp"),0,35,100,40);
     }
     else if(healthpoints == 0){
-        ctx.drawImage(document.getElementById("0hp"),80,2,100,40);
+        ctx.drawImage(document.getElementById("0hp"),0,35,100,40);
     }
     if (healthpoints < 1){
     ctx.globalAlpha = 0.5;
@@ -1096,7 +1102,7 @@ function LoopEverything(){
     ctx.globalAlpha = 1.0;
         startOver();
     
-    ctx.drawImage(document.getElementById("0hp"),80,2,100,40);
+    ctx.drawImage(document.getElementById("0hp"),0,35,100,40);
     }
     ///Coin animation
     if (coinAnimation > 44){
