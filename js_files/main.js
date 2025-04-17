@@ -9,6 +9,8 @@ let inventory = cropGenerating();
 let listofSounds = [];
 
 
+let coinslist = [];
+let deathCounter = 0;
 let visitedShop = false;
 let dots = 0;
 let counter = 0;
@@ -16,7 +18,6 @@ let tractor= {
     x: 0,
     y: 370
 };
-clearCookies();
 const inventoryDiv = document.getElementById("Inventory");
 inventoryDiv.style.display = "None";
 
@@ -281,7 +282,10 @@ window.onload = () => {
                         
                             });
                         ///
-                        
+                        setInterval(() => {
+                            spawnCoins();
+                        }, 15000);
+
                         ///   
                         LoopEverything();
                         }
@@ -415,6 +419,48 @@ window.onload = () => {
 ////
 
 };
+//// coinspawn
+
+function spawnCoins(){
+    while(coinslist.length < 3) {
+        let coin = {
+          x: Math.random() * (canvas.width - 20) + 10,
+          y: Math.random() * (canvas.height - 20) + 10,
+          hasHit: false
+        };
+        coinslist.push(coin);
+      }
+}
+function checkCoinCollision() {
+    for (let i = 0; i < coinslist.length; i++) {
+        let coin = coinslist[i]; 
+        if (
+            coin.x < character.x + character.width &&
+            coin.x + 25 > character.x &&
+            coin.y < character.y + character.height &&
+            coin.y + 25 > character.y
+            && !coin.hasHit
+        ) {
+
+            listofSounds[6].play();
+            coin.hasHit = true;
+            coins++;
+            coinslist = removeItem(coin);
+
+        }
+    }
+  }
+
+function removeItem(coin_){
+    let newlist = [];
+    coinslist.forEach(coin =>{
+        if (coin != coin_){
+            newlist.push(coin);
+        }
+    });
+    return newlist;
+}
+
 ///// rain
 function drawBlocks() {
     ctx.fillStyle = '#64a9a6';
@@ -463,13 +509,13 @@ function stopRainPhase() {
     rainActive = false;
     clearInterval(blockSpawnInterval);
     setTimeout(() => {
-        if ( healthpoints == 3){
+        if ( healthpoints == 3 && deathCounter == 0){
             coins += 25;
-  
+
+            deathCounter = 0;
         }
 
     }, 7000);
-
     scheduleNextRainPhase();
 }
 function stoprain(){
@@ -722,7 +768,8 @@ function SetGridProperties(grid){
         return grid;
     }
     else if(grid.virag != null && grid.ido >= (grid.virag).ido && grid.ontozve == true){
-        let i = inventory.indexOf(grid.virag);
+
+        let i = findIndexbyName((grid.virag).nev);
         inventory[i].amount += (grid.virag).kidobottSeed;
         inventory[i].grownamount++;
         listofSounds[6].play();
@@ -737,6 +784,14 @@ function SetGridProperties(grid){
     }
     return grid;
 }
+function findIndexbyName(cropname){
+    for (let i = 0; i < inventory.length; i++){
+        if (inventory[i].nev === cropname){
+            return i;
+        }
+    }
+}
+
 function seeProperties(currentGrid){ 
     let itemname = document.getElementById("item-name");
     itemname.innerText = "";
@@ -748,23 +803,22 @@ function seeProperties(currentGrid){
     }
     else if(currentGrid.virag === null && currentGrid.viragKivalasztva != null){
         commandbar.innerText = "Press [E] to plant seed";
-    
+        
     }
     else if(currentGrid.virag != null && currentGrid.ontozve === false  ){
+        currentGrid.playedsound = 0;
         commandbar.innerText = "Press [E] to water soil";
         itemname.innerText = currentGrid.virag.nev;
     }   
     else if(currentGrid.virag != null && currentGrid.ido < (currentGrid.virag).ido){
         commandbar.innerText = "";
-        itemname.innerText = currentGrid.virag.nev;
+        let leftoverSecs = (currentGrid.virag).ido - currentGrid.ido;
+        itemname.innerText = currentGrid.virag.nev + " " + leftoverSecs + "s";
     }
     else if(currentGrid.virag != null && currentGrid.ido >= currentGrid.virag.ido){
         commandbar.innerText = "Press [E] to harvest";
         itemname.innerText = currentGrid.virag.nev;
-        if (currentGrid.playedsound == 0){
-            listofSounds[5].play();
-            currentGrid.playedsound++;
-        }
+       
     }
 }
 function seeGrid(currentGrid){
@@ -876,6 +930,7 @@ ctx.fillRect(0,0,canvas.width,canvas.height);
 ctx.globalAlpha = 1.0;
 stopcharacter = true;
 commandbar.innerText = "";
+deathCounter++;
 stoprain();
 document.getElementById("startoverButton").addEventListener('click', () =>{
     inventory = cropGenerating();
@@ -900,7 +955,7 @@ document.getElementById("startoverButton").addEventListener('click', () =>{
     setCookie("Inventory",0);
     setCookie("Grids",0);
     setCookie("Seconds,Days,daytime",0);
-    setCookie("Coins",0);
+    setCookie("Coins","");
     setCookie("Health","");
 });
 
@@ -1003,9 +1058,14 @@ function LoopEverything(){
         DrawReadyMark(grid);
     });
 
-
+    
     ///    
     digital();
+    /// spawn coins
+     coinslist.forEach(coin =>{
+        ctx.drawImage(document.getElementById("coin-1"),coin.x,coin.y,25,25);
+    });
+    checkCoinCollision();
     /// karakterre vonatkozó frissülő adatok
     moveCharacter();
     drawCharacter();
@@ -1057,12 +1117,20 @@ function LoopEverything(){
 
     }
     
+    gridlist.forEach(_grid =>{
+        if (_grid.virag != null && _grid.ido == (_grid.virag).ido){
+            if (_grid.playedsound == 0){
+                listofSounds[5].play();
+                _grid.playedsound++;
+            }
+        }
+    });
+   
 
-    
     //// rain
     updateBlocks();
     drawBlocks();
-  
+    
     ////
     if(Volume == 0){
         document.getElementById("soundicon").src = "images/soundiconOff.png";

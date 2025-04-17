@@ -220,7 +220,7 @@ window.onload = () => {
 
     document.getElementById("xbutton").addEventListener('click',() =>{
         saveInventory();
-        setCookie("Coins");
+        setCookie("Coins", coins);
         window.close();
         window.open('index.html');
     });
