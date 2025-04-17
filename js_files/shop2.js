@@ -4,13 +4,17 @@ let InventoryString = getCookie("Inventory");
 let inventory = cropGenerating();
 InventorySet(InventoryString);
 let coins = Number(getCookie("Coins"));
+
 let coinanimation = 0;
 let imgsrc = document.getElementById("coin-1");
+let volume = Number(getCookie("Volume"));
+
 
 let upgrade = Number(getCookie("Upgrade"));
 let upgrade1 = document.getElementById("button-Upgrade-1");
 let upgrade2 = document.getElementById("button-Upgrade-2");
 
+let listofSounds = []
 let hasPressed = false;
 let Award = false;
 
@@ -107,6 +111,26 @@ function neededItems(){
 
 window.onload = () => {
     RefreshInv();
+        document.addEventListener("mousemove", () =>{
+            if (listofSounds.length == 0){
+                let background = document.getElementById("backgroundAudio");
+                background.play();
+                background.volume = 0.2;
+                listofSounds.push(background);
+                for(let i = 1; i < 8; i++ ){
+                    listofSounds.push(document.getElementById(`sound-${i}`));
+                }
+                listofSounds.forEach(sound => {
+                    if (sound != document.getElementById("backgroundAudio")){
+
+                        sound.volume = volume / 100;
+                    }
+                    
+                });
+
+            }
+    });
+        
 
         for(let i = 1; i < 13; i++){
             let crop = chooseCropByClass(`.button-${i}`);
@@ -123,6 +147,7 @@ window.onload = () => {
                 if(coins >= crop.price){
                     coins -= crop.price;
                     crop.amount++;
+                    listofSounds[7].play();
                     console.log("Successful purchase!");
                 }
                 else{
@@ -150,6 +175,7 @@ window.onload = () => {
             if (coins >= 1000){
                 coins -= 1000;
                 upgrade = 1;
+                listofSounds[7].play();
                 console.log("Successful purchase!");
             }
             else{
@@ -178,6 +204,7 @@ window.onload = () => {
         if (coins >= 4000){
             coins -= 4000;
             upgrade = 2;
+            listofSounds[7].play();
             console.log("Successful purchase!");
         }
         else{

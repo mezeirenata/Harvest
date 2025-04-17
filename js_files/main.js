@@ -58,7 +58,7 @@ let coinAnimation = 48;
 
 let stopcharacter = false;
 
-// clearCookies();
+
 
 function Cookies(){
     if (getCookie("Visitedshop") == "true"){
@@ -372,7 +372,10 @@ window.onload = () => {
                         
                             });
                         ///
-                        
+                        setInterval(() => {
+                            spawnCoins();
+                        }, 15000);
+
                         ///   
                         LoopEverything();
     }
@@ -428,6 +431,10 @@ function spawnCoins(){
           y: Math.random() * (canvas.height - 20) + 10,
           hasHit: false
         };
+        while(coin.x > 888 && coin.y < 110) {
+            coin.x = Math.random() * (canvas.width - 20) + 10;
+            coin.y = Math.random() * (canvas.height - 20) + 10;
+        }
         coinslist.push(coin);
       }
 }
