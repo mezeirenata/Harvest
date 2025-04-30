@@ -164,7 +164,9 @@ function digital() {
 }
 window.onload = () => {
     Cookies();
-    console.log(healthpoints);
+    console.log(`HP: ${healthpoints}`);
+    console.log(`Days: ${days}`);
+    console.log(`Crops harvested: ${harvestedcrops()}`);
     if (visitedShop != true){
         mainScreen();
         document.getElementById("play-button").addEventListener('click', () => {
@@ -422,6 +424,19 @@ window.onload = () => {
 
 };
 //// coinspawn
+
+function harvestedcrops(){
+    let harvested = [];
+    inventory.forEach(crop => {
+        if (crop.grownamount > 0){
+            harvested.push(`${crop.nev} - ${crop.grownamount}`);
+        }
+    });
+    if (harvested.length == 0){
+        return "There is no crop that has been harvested yet";
+    }
+    return harvested;
+}
 
 function spawnCoins(){
     while(coinslist.length < 3) {
