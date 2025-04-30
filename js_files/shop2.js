@@ -244,7 +244,9 @@ window.onload = () => {
                 document.getElementById("Owned-3").style.display = "block";
             }
         });
-
+    
+    
+        document.getElementById("xbutton").style.cursor = "pointer";    
     document.getElementById("xbutton").addEventListener('click',() =>{
         saveInventory();
         setCookie("Coins", coins);

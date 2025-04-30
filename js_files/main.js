@@ -8,7 +8,6 @@ let character =  new Player(canvas.width / 2, canvas.height / 2, 35,35);
 let inventory = cropGenerating();
 let listofSounds = [];
 
-
 let coinslist = [];
 let deathCounter = 0;
 let visitedShop = false;
@@ -57,7 +56,6 @@ let imgsrc = document.getElementById("coin-1");
 let coinAnimation = 48;
 
 let stopcharacter = false;
-
 
 
 function Cookies(){
@@ -166,6 +164,7 @@ function digital() {
 }
 window.onload = () => {
     Cookies();
+    console.log(healthpoints);
     if (visitedShop != true){
         mainScreen();
         document.getElementById("play-button").addEventListener('click', () => {
@@ -1099,6 +1098,7 @@ function LoopEverything(){
      setCookie("Volume",Volume);
      setCookie("Award",Award);
      setCookie("Visitedshop",false);
+     setCookie("Health",healthpoints);
    ///
     document.getElementById("coins-amount").innerText = coins;
  
@@ -1162,7 +1162,7 @@ function LoopEverything(){
     }
 
     ////
-    if (healthpoints == 3){
+    if (healthpoints > 2){
         ctx.drawImage(document.getElementById("fullhp"),0,35,100,40);
     }    
     else if(healthpoints == 2){
